@@ -1,0 +1,57 @@
+<template>
+  <v-container>
+    <v-app-bar absolute color="orange lighten-1" evalate-on-scroll>
+      <v-app-bar-nav-icon dark @click.stop="drawer = !drawer" />
+      <v-toolbar-title>
+        <v-img src="../../public/專題LOGO.png" width="200" height="50" />
+      </v-toolbar-title>
+      <v-spacer /><v-spacer /><v-spacer />
+      <v-text-field append-icon="mdi-magnify" class="mt-6" dense solo rounded />
+    </v-app-bar>
+
+    <v-navigation-drawer v-model="drawer" absolute temporary>
+      <v-list-item>
+        <v-list-item-avatar>
+          <v-img
+            src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
+          ></v-img>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>KimoJi</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider />
+
+      <v-list dense nav>
+        <v-list-item v-for="item in items" :key="item.name" link>
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>{{ item.name }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+  </v-container>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      drawer: false,
+      items: [
+        { name: "首頁", icon: "mdi-home" },
+        { name: "保險商品", icon: "mdi-view-dashboard" },
+        { name: "排行榜", icon: "mdi-star" },
+        { name: "幫助中心", icon: "mdi-lightbulb" },
+      ],
+    };
+  },
+  updated() {
+    console.log(this.drawer);
+  },
+};
+</script>

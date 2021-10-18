@@ -10,15 +10,22 @@
                   <v-row>
                     <v-col cols="12" md="5" class="orange lighten-1">
                       <v-card-text>
-                        <v-img src="../../public/專題LOGO-v.png" class="mt-10" />
+                        <v-img
+                          src="../../public/專題LOGO-v.png"
+                          class="mt-10"
+                        />
                       </v-card-text>
                       <div class="text-center mt-4">
-                        <v-btn rounded outlined dark x-large @click="step=2">註冊</v-btn>
+                        <v-btn rounded outlined dark x-large @click="step = 2"
+                          >註冊</v-btn
+                        >
                       </div>
                     </v-col>
                     <v-col cols="12" md="7">
                       <v-card-text class="mt-12">
-                        <h1 class="text-center grey--text">感謝您使用我們的網站</h1>
+                        <h1 class="text-center grey--text">
+                          感謝您使用我們的網站
+                        </h1>
                         <br /><br />
                         <h1 class="text-center grey--text">登入使用更多功能</h1>
                         <br />
@@ -42,14 +49,14 @@
                         <v-btn color="orange lighten-1" text>忘記密碼？</v-btn>
                       </v-card-text>
                       <div class="text-center mt-3 mb-6">
-                        <v-btn color="orange lighten-1" dark rounded x-large>登入</v-btn>
+                        <v-btn color="orange lighten-1" dark rounded x-large
+                          >登入</v-btn
+                        >
                       </div>
                     </v-col>
                   </v-row>
                 </v-window-item>
-                <v-window-item value="2">
-
-                </v-window-item>
+                <v-window-item value="2"> </v-window-item>
               </v-window>
             </v-card>
           </v-col>

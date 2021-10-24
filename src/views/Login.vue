@@ -29,6 +29,7 @@
                         color="orange"
                         filled
                         rounded
+                        v-model="account"
                       />
                       <v-text-field
                         label="密碼"
@@ -39,12 +40,18 @@
                         filled
                         rounded
                         @click:append="show = !show"
+                        v-model="passwd"
                       />
                     </v-form>
                     <v-btn color="orange lighten-1" text>忘記密碼？</v-btn>
                   </v-card-text>
                   <div class="text-center mt-3 mb-6">
-                    <v-btn color="orange lighten-1" dark rounded x-large
+                    <v-btn
+                      color="orange lighten-1"
+                      dark
+                      rounded
+                      x-large
+                      @click="login()"
                       >登入</v-btn
                     >
                   </div>
@@ -66,12 +73,16 @@ export default {
   data() {
     return {
       show: false,
-      items: [1, 2, 3, 4, 5],
+      account: "",
+      passwd: "",
     };
   },
   methods: {
     goRegist() {
       this.$router.push({ name: "Regist" });
+    },
+    login() {
+      this.$router.push({ name: "HomePage" });
     },
   },
 };

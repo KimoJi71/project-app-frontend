@@ -25,6 +25,7 @@
                         dense
                         filled
                         rounded
+                        v-model="account"
                       />
                       <v-text-field
                         label="密碼"
@@ -35,8 +36,9 @@
                         filled
                         rounded
                         @click:append="show = !show"
+                        v-model="passwd"
                       />
-                      <v-radio-group dense row>
+                      <v-radio-group dense row v-model="gender">
                         <span style="font-size: 14px"
                           >生理性別&emsp;&emsp;</span
                         >
@@ -50,66 +52,113 @@
                         filled
                         rounded
                       />
-                      <v-text-field
-                        label="出生日期"
-                        color="orange"
-                        dense
-                        filled
-                        rounded
-                      />
-                      <v-radio-group dense row>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :return-value.sync="date"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            label="出生日期"
+                            color="orange"
+                            dense
+                            filled
+                            rounded
+                            clearable
+                            v-bind="attrs"
+                            v-on="on"
+                            v-model="date"
+                          />
+                        </template>
+                        <v-date-picker v-model="date" no-title scrollable>
+                          <v-spacer />
+                          <v-btn text color="orange" @click="menu = false"
+                            >取消</v-btn
+                          >
+                          <v-btn
+                            text
+                            color="orange"
+                            @click="$refs.menu.save(date)"
+                            >確定</v-btn
+                          >
+                        </v-date-picker>
+                      </v-menu>
+                      <v-radio-group dense row v-model="identify">
                         <span style="font-size: 14px">身份&emsp;&emsp;</span>
                         <v-radio label="保戶" value="member" />
                         <v-radio label="業務員" value="salesmanMember" />
                       </v-radio-group>
-                      <v-select
-                        label="所屬公司"
-                        :items="items"
-                        color="orange"
-                        dense
-                        filled
-                        rounded
-                      />
-                      <v-text-field
-                        label="公司電話"
-                        color="orange"
-                        dense
-                        filled
-                        rounded
-                      />
-                      <v-text-field
-                        label="公司 Email"
-                        color="orange"
-                        dense
-                        filled
-                        rounded
-                      />
-                      <span style="font-size: 14px">可提供服務</span>
-                      <v-row>
-                        <v-col cols="12" md="3">
-                          <v-checkbox label="壽險" />
-                        </v-col>
-                        <v-col cols="12" md="3">
-                          <v-checkbox label="產險" />
-                        </v-col>
-                        <v-col cols="12" md="3">
-                          <v-checkbox label="其他" />
-                        </v-col>
-                      </v-row>
-                      <v-text-field
-                        label="連絡電話"
-                        color="orange"
-                        dense
-                        filled
-                        rounded
-                      />
-                      <v-text-field
-                        label="Line ID"
-                        color="orange"
-                        dense
-                        filled
-                        rounded
-                      />
+                      <div v-if="identify === 'salesmanMember'">
+                        <v-select
+                          label="所屬公司"
+                          :items="items"
+                          color="orange"
+                          dense
+                          filled
+                          rounded
+                          v-model="company"
+                        />
+                        <v-text-field
+                          label="公司電話"
+                          color="orange"
+                          dense
+                          filled
+                          rounded
+                          v-model="companyPhone"
+                        />
+                        <v-text-field
+                          label="公司 Email"
+                          color="orange"
+                          dense
+                          filled
+                          rounded
+                          v-model="companyEmail"
+                        />
+                        <span style="font-size: 14px">可提供服務</span>
+                        <v-row>
+                          <v-col cols="12" md="3">
+                            <v-checkbox
+                              label="壽險"
+                              value="lifeIns"
+                              v-model="service"
+                            />
+                          </v-col>
+                          <v-col cols="12" md="3">
+                            <v-checkbox
+                              label="產險"
+                              value="propertyIns"
+                              v-model="service"
+                            />
+                          </v-col>
+                          <v-col cols="12" md="3">
+                            <v-checkbox
+                              label="其他"
+                              value="else"
+                              v-model="service"
+                            />
+                          </v-col>
+                        </v-row>
+                        <v-text-field
+                          label="連絡電話"
+                          color="orange"
+                          dense
+                          filled
+                          rounded
+                          v-model="phone"
+                        />
+                        <v-text-field
+                          label="Line ID"
+                          color="orange"
+                          dense
+                          filled
+                          rounded
+                          v-model="lineID"
+                        />
+                      </div>
                     </v-form>
                   </v-card-text>
                   <div class="text-center mt-3 mb-6">
@@ -136,6 +185,19 @@ export default {
     return {
       show: false,
       items: [1, 2, 3, 4, 5],
+      account: "",
+      passwd: "",
+      gender: "",
+      menu: false,
+      date: "",
+      identify: "",
+      // 若身份為業務員
+      company: "",
+      companyPhone: "",
+      companyEmail: "",
+      service: [],
+      phone: "",
+      lineID: "",
     };
   },
   methods: {

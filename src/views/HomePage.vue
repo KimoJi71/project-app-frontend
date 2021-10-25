@@ -1,57 +1,54 @@
 <template>
-  <v-container>
-    <v-app-bar absolute color="orange lighten-1" evalate-on-scroll>
-      <v-app-bar-nav-icon dark @click.stop="drawer = !drawer" />
-      <v-toolbar-title>
-        <v-img src="../../public/專題LOGO.png" width="200" height="50" />
-      </v-toolbar-title>
-      <v-spacer /><v-spacer /><v-spacer />
-      <v-text-field append-icon="mdi-magnify" class="mt-6" dense solo rounded />
-    </v-app-bar>
-
-    <v-navigation-drawer v-model="drawer" absolute temporary>
-      <v-list-item>
+  <div id="bkg">
+    <Header />
+    <br /><br /><br />
+    <v-card class="mx-auto my-6" max-width="80%" elevation="3">
+      <v-card-text>
         <v-list-item-avatar>
           <v-img
             src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
-          ></v-img>
+          />
         </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title>KimoJi</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-divider />
-
-      <v-list dense nav>
-        <v-list-item v-for="item in items" :key="item.name" link>
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.name }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-  </v-container>
+        <span>abcxxxxx · 5小時前</span>
+        <div class="black--text mt-2">
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has been the industry's standard dummy text ever
+          since the 1500s, when an unknown printer took a galley of type and
+          scrambled it to make a type specimen book
+        </div>
+        <v-divider class="mt-4" />
+        <v-row class="mt-2">
+          <v-col md="8">
+            <v-icon color="red">mdi-heart-outline</v-icon>
+            <v-icon class="ml-2" color="warning">mdi-alert</v-icon>
+            <v-icon class="ml-2" color="success">mdi-share</v-icon>
+            <v-icon class="ml-2" color="blue">mdi-bookmark-outline</v-icon>
+          </v-col>
+          <v-col md="4">
+            <span style="float: right">共 0 則留言</span>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>
+import Header from "../components/Header.vue";
+
 export default {
-  data() {
-    return {
-      drawer: false,
-      items: [
-        { name: "首頁", icon: "mdi-home" },
-        { name: "保險商品", icon: "mdi-view-dashboard" },
-        { name: "排行榜", icon: "mdi-star" },
-        { name: "幫助中心", icon: "mdi-lightbulb" },
-      ],
-    };
+  components: {
+    Header,
   },
-  updated() {
-    console.log(this.drawer);
+  data() {
+    return {};
   },
 };
 </script>
+
+<style scoped>
+#bkg {
+  background-color: #fdf7ef;
+  height: 100%;
+}
+</style>

@@ -6,7 +6,7 @@
           <v-col cols="12" sm="8" md="8">
             <v-card class="elevation-8 my-8">
               <v-row>
-                <v-col class="orange lighten-1" cols="12" md="5">
+                <v-col class="primary lighten-1" cols="12" md="5">
                   <v-card-text>
                     <v-img src="../../public/專題LOGO-v.png" class="mt-10" />
                   </v-card-text>
@@ -21,7 +21,6 @@
                     <v-form>
                       <v-text-field
                         label="帳號"
-                        color="orange"
                         dense
                         filled
                         rounded
@@ -31,7 +30,6 @@
                         label="密碼"
                         :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="show ? 'text' : 'password'"
-                        color="orange"
                         dense
                         filled
                         rounded
@@ -45,13 +43,7 @@
                         <v-radio label="男性" value="male" />
                         <v-radio label="女性" value="female" />
                       </v-radio-group>
-                      <v-text-field
-                        label="暱稱"
-                        color="orange"
-                        dense
-                        filled
-                        rounded
-                      />
+                      <v-text-field label="暱稱" dense filled rounded />
                       <v-menu
                         ref="menu"
                         v-model="menu"
@@ -64,7 +56,6 @@
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             label="出生日期"
-                            color="orange"
                             dense
                             filled
                             rounded
@@ -76,13 +67,8 @@
                         </template>
                         <v-date-picker v-model="date" no-title scrollable>
                           <v-spacer />
-                          <v-btn text color="orange" @click="menu = false"
-                            >取消</v-btn
-                          >
-                          <v-btn
-                            text
-                            color="orange"
-                            @click="$refs.menu.save(date)"
+                          <v-btn text @click="menu = false">取消</v-btn>
+                          <v-btn text @click="$refs.menu.save(date)"
                             >確定</v-btn
                           >
                         </v-date-picker>
@@ -96,7 +82,6 @@
                         <v-select
                           label="所屬公司"
                           :items="items"
-                          color="orange"
                           dense
                           filled
                           rounded
@@ -104,7 +89,6 @@
                         />
                         <v-text-field
                           label="公司電話"
-                          color="orange"
                           dense
                           filled
                           rounded
@@ -112,7 +96,6 @@
                         />
                         <v-text-field
                           label="公司 Email"
-                          color="orange"
                           dense
                           filled
                           rounded
@@ -144,7 +127,6 @@
                         </v-row>
                         <v-text-field
                           label="連絡電話"
-                          color="orange"
                           dense
                           filled
                           rounded
@@ -152,7 +134,6 @@
                         />
                         <v-text-field
                           label="Line ID"
-                          color="orange"
                           dense
                           filled
                           rounded
@@ -162,7 +143,7 @@
                     </v-form>
                   </v-card-text>
                   <div class="text-center mt-3 mb-6">
-                    <v-btn color="orange lighten-1" dark rounded x-large
+                    <v-btn color="primary lighten-1" dark rounded x-large
                       >註冊</v-btn
                     >
                   </div>

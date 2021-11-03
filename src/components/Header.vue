@@ -1,12 +1,18 @@
 <template>
   <div>
-    <v-app-bar absolute color="orange lighten-1" evalate-on-scroll>
+    <v-app-bar fixed color="primary lighten-1" evalate-on-scroll>
       <v-app-bar-nav-icon dark @click.stop="drawer = !drawer" />
       <v-toolbar-title>
-        <v-img src="../../public/專題LOGO.png" width="200" height="50" />
+        <v-img src="../../public/專題LOGO.png" width="200" height="35" />
       </v-toolbar-title>
       <v-spacer /><v-spacer /><v-spacer />
-      <v-text-field append-icon="mdi-magnify" class="mt-6" dense solo rounded />
+      <v-text-field
+        append-icon="mdi-magnify"
+        class="mt-6 ml-9"
+        dense
+        solo
+        rounded
+      />
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
@@ -61,7 +67,7 @@ export default {
     return {
       drawer: false,
       items: [
-        { name: "首頁", icon: "mdi-home", href: "/" },
+        { name: "首頁", icon: "mdi-home", href: "/posts" },
         { name: "保險商品", icon: "mdi-view-dashboard", href: "/products" },
         { name: "排行榜", icon: "mdi-star", href: "/rank" },
         { name: "幫助中心", icon: "mdi-lightbulb", href: "/help" },

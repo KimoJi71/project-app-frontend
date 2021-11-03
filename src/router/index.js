@@ -5,19 +5,34 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
     name: "HomePage",
-    component: () => import("../views/HomePage.vue"),
+    path: "/posts",
+    component: () => import("@/pages/post/HomePage"),
   },
   {
-    path: "/login",
+    name: "PostDetail",
+    path: "/posts/detail/:id",
+    component: () => import("@/pages/post/PostDetail"),
+  },
+  {
+    name: "CreatePost",
+    path: "/posts/createPost",
+    component: () => import("@/pages/post/CreatePost"),
+  },
+  {
+    name: "UpdatePost",
+    path: "/posts/updatePost",
+    component: () => import("@/pages/post/UpdatePost"),
+  },
+  {
     name: "Login",
-    component: () => import("../views/Login.vue"),
+    path: "/login",
+    component: () => import("@/pages/Login"),
   },
   {
-    path: "/regist",
-    name: "Regist",
-    component: () => import("../views/Regist.vue"),
+    name: "Register",
+    path: "/register",
+    component: () => import("@/pages/Register"),
   },
 ];
 

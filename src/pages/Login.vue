@@ -6,7 +6,7 @@
           <v-col cols="12" sm="8" md="8">
             <v-card class="elevation-8">
               <v-row>
-                <v-col cols="12" md="5" class="orange lighten-1">
+                <v-col cols="12" md="5" class="primary lighten-1">
                   <v-card-text>
                     <v-img src="../../public/專題LOGO-v.png" class="mt-10" />
                   </v-card-text>
@@ -26,7 +26,6 @@
                       <v-text-field
                         label="帳號"
                         prepend-inner-icon="mdi-account"
-                        color="orange"
                         filled
                         rounded
                         v-model="account"
@@ -36,18 +35,17 @@
                         prepend-inner-icon="mdi-lock"
                         :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="show ? 'text' : 'password'"
-                        color="orange"
                         filled
                         rounded
                         @click:append="show = !show"
                         v-model="passwd"
                       />
                     </v-form>
-                    <v-btn color="orange lighten-1" text>忘記密碼？</v-btn>
+                    <v-btn color="primary lighten-1" text>忘記密碼？</v-btn>
                   </v-card-text>
                   <div class="text-center mt-3 mb-6">
                     <v-btn
-                      color="orange lighten-1"
+                      color="primary lighten-1"
                       dark
                       rounded
                       x-large
@@ -79,7 +77,7 @@ export default {
   },
   methods: {
     goRegist() {
-      this.$router.push({ name: "Regist" });
+      this.$router.push({ name: "Register" });
     },
     login() {
       this.$router.push({ name: "HomePage" });

@@ -25,6 +25,11 @@ const routes = [
     component: () => import("@/pages/post/UpdatePost"),
   },
   {
+    name: "Products",
+    path: "/products",
+    component: () => import("@/pages/product/Product"),
+  },
+  {
     name: "Login",
     path: "/login",
     component: () => import("@/pages/Login"),
@@ -33,6 +38,10 @@ const routes = [
     name: "Register",
     path: "/register",
     component: () => import("@/pages/Register"),
+  },
+  {
+    path: "/",
+    redirect: "/posts",
   },
 ];
 

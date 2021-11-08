@@ -4,7 +4,7 @@
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="8">
-            <v-card class="elevation-8 my-8">
+            <v-card class="my-8" elevation="8">
               <v-row>
                 <v-col class="primary lighten-1" cols="12" md="5">
                   <v-card-text>

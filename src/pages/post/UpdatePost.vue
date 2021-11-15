@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     goBack() {
-      this.$router.push({ name: "HomePage" });
+      this.$router.back(-1);
     },
   },
 };

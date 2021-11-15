@@ -38,12 +38,20 @@
           >
         </div>
         <v-divider class="mt-4" />
-        <div class="mt-4">
-          <v-icon color="red">mdi-heart-outline</v-icon>
-          <v-icon class="ml-2" color="warning">mdi-alert</v-icon>
-          <v-icon class="ml-2" color="success">mdi-share</v-icon>
-          <v-icon class="ml-2" color="blue">mdi-bookmark-outline</v-icon>
-          <span style="float: right">共 0 則留言</span>
+        <div class="mt-3">
+          <v-btn icon>
+            <v-icon color="red">mdi-heart-outline</v-icon>
+          </v-btn>
+          <v-btn icon>
+            <v-icon color="warning">mdi-alert</v-icon>
+          </v-btn>
+          <v-btn icon>
+            <v-icon color="success">mdi-share</v-icon>
+          </v-btn>
+          <v-btn icon>
+            <v-icon color="blue">mdi-bookmark-outline</v-icon>
+          </v-btn>
+          <span class="mt-2" style="float: right">共 2 則留言</span>
         </div>
       </v-card-text>
     </v-card>

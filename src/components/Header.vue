@@ -16,7 +16,7 @@
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
-      <v-list-item link to="/profile">
+      <v-list-item link to="/profile/1">
         <v-list-item-avatar>
           <v-img
             src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
@@ -69,8 +69,8 @@ export default {
       items: [
         { name: "首頁", icon: "mdi-home", href: "/posts" },
         { name: "保險商品", icon: "mdi-view-dashboard", href: "/products" },
-        { name: "排行榜", icon: "mdi-star", href: "/rank" },
-        { name: "幫助中心", icon: "mdi-lightbulb", href: "/help" },
+        // { name: "排行榜", icon: "mdi-star", href: "/rank" },
+        // { name: "幫助中心", icon: "mdi-lightbulb", href: "/help" },
       ],
     };
   },

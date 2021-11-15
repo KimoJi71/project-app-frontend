@@ -5,6 +5,22 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    name: "Login",
+    path: "/",
+    component: () => import("@/pages/Login"),
+    meta: {
+      title: "登入",
+    },
+  },
+  {
+    name: "Register",
+    path: "/register",
+    component: () => import("@/pages/Register"),
+    meta: {
+      title: "註冊",
+    },
+  },
+  {
     name: "HomePage",
     path: "/posts",
     component: () => import("@/pages/post/HomePage"),
@@ -53,19 +69,19 @@ const routes = [
     },
   },
   {
-    name: "Login",
-    path: "/",
-    component: () => import("@/pages/Login"),
+    name: "Profile",
+    path: "/profile/:id",
+    component: () => import("@/pages/profile/Profile"),
     meta: {
-      title: "登入",
+      title: "個人頁面",
     },
   },
   {
-    name: "Register",
-    path: "/register",
-    component: () => import("@/pages/Register"),
+    name: "CollectPost",
+    path: "/collections/post/",
+    component: () => import("@/pages/collection/collectPost"),
     meta: {
-      title: "註冊",
+      title: "收藏",
     },
   },
 ];

@@ -98,10 +98,16 @@
 
       <v-divider class="ml-4" />
 
-      <div class="mt-4 ml-4">
-        <v-icon class="mb-4" color="red">mdi-heart-outline</v-icon>
-        <v-icon class="ml-2 mb-4" color="success">mdi-share</v-icon>
-        <v-icon class="ml-2 mb-4" color="blue">mdi-bookmark-outline</v-icon>
+      <div class="mt-2 ml-2">
+        <v-btn class="mb-2" icon>
+          <v-icon color="red">mdi-heart-outline</v-icon>
+        </v-btn>
+        <v-btn class="mb-2" icon>
+          <v-icon color="success">mdi-share</v-icon>
+        </v-btn>
+        <v-btn class="mb-2" icon>
+          <v-icon color="blue">mdi-bookmark-outline</v-icon>
+        </v-btn>
       </div>
     </v-card>
 

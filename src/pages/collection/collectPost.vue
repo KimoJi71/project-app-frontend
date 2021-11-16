@@ -13,7 +13,7 @@ import CollectBtn from "@/components/collection/CollectBtn.vue";
 export default {
   components: {
     Header,
-    CollectBtn
+    CollectBtn,
   },
 };
 </script>

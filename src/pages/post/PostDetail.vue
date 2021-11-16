@@ -6,10 +6,8 @@
       <v-card-text>
         <v-row>
           <v-col>
-            <v-list-item-avatar>
-              <v-img
-                src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
-              />
+            <v-list-item-avatar color="grey">
+              <v-icon dark>mdi-account</v-icon>
             </v-list-item-avatar>
             <span>abcxxxxx · 5小時前</span>
             <div class="black--text mt-2">
@@ -45,10 +43,8 @@
 
         <v-row class="mt-4">
           <v-col cols="12" md="1">
-            <v-list-item-avatar>
-              <v-img
-                src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
-              />
+            <v-list-item-avatar color="grey">
+              <v-icon dark>mdi-account</v-icon>
             </v-list-item-avatar>
           </v-col>
           <v-col cols="12" md="11">
@@ -67,10 +63,8 @@
 
         <v-row>
           <v-col>
-            <v-list-item-avatar>
-              <v-img
-                src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
-              />
+            <v-list-item-avatar color="grey">
+              <v-icon dark>mdi-account</v-icon>
             </v-list-item-avatar>
             <span>qazxxxxxxxxx · 3小時前</span>
             <div class="black--text mt-2 mb-4 ml-14">
@@ -86,10 +80,8 @@
 
         <v-row>
           <v-col>
-            <v-list-item-avatar>
-              <v-img
-                src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
-              />
+            <v-list-item-avatar color="grey">
+              <v-icon dark>mdi-account</v-icon>
             </v-list-item-avatar>
             <span>qazxxxxxxxxx · 3小時前</span>
             <div class="black--text mt-2 mb-4 ml-14">

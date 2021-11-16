@@ -103,12 +103,15 @@ export default {
           { root: true }
         );
       } catch (err) {
-        console.log(err);
-        this.setPopupStatus(true, { root: true });
-        this.setPopupDetails(
-          { popupMsgColor: "red", popupMsg: "帳號密碼有誤" },
-          { root: true }
-        );
+        if (err.response.data.success === false) {
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "red", popupMsg: "帳號密碼有誤" },
+            { root: true }
+          );
+        } else {
+          console.log(err);
+        }
       }
     },
     ...mapMutations({

@@ -11,10 +11,8 @@
         <v-card v-if="screenWidth > 960 || show">
           <v-list>
             <v-list-item>
-              <v-list-item-avatar class="mx-auto" size="85">
-                <v-img
-                  src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
-                ></v-img>
+              <v-list-item-avatar class="mx-auto" color="grey" size="85">
+                <v-icon dark x-large>mdi-account</v-icon>
               </v-list-item-avatar>
             </v-list-item>
             <v-list-item>
@@ -110,10 +108,8 @@
         <v-row justify="center">
           <v-card class="mb-6" max-width="90%" elevation="3">
             <v-card-text>
-              <v-list-item-avatar>
-                <v-img
-                  src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
-                />
+              <v-list-item-avatar color="grey">
+                <v-icon dark>mdi-account</v-icon>
               </v-list-item-avatar>
               <span>abcxxxxx · 5小時前</span>
               <v-menu offset-x rounded="lg">

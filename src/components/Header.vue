@@ -17,10 +17,8 @@
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
       <v-list-item link to="/profile/1">
-        <v-list-item-avatar>
-          <v-img
-            src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
-          />
+        <v-list-item-avatar color="grey">
+          <v-icon dark>mdi-account</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>KimoJi</v-list-item-title>

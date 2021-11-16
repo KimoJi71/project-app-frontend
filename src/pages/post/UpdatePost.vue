@@ -6,10 +6,8 @@
       <v-card-title>編輯貼文</v-card-title>
       <v-divider class="ml-4" />
       <v-card-text>
-        <v-list-item-avatar>
-          <v-img
-            src="https://www.tarkettsee.com/media/img/M/THH_25121917_25131917_25126917_25136917_001.jpg"
-          />
+        <v-list-item-avatar color="grey">
+          <v-icon dark>mdi-account</v-icon>
         </v-list-item-avatar>
         <span>abcxxxxx</span>
         <v-row class="mx-1 mt-4">

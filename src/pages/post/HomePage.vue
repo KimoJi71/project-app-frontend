@@ -73,15 +73,19 @@
       </template>
       <span>新增貼文</span>
     </v-tooltip>
+
+    <Snackbar />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import Snackbar from "@/components/Snackbar.vue";
 
 export default {
   components: {
     Header,
+    Snackbar,
   },
   data() {
     return {

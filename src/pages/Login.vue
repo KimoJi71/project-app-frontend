@@ -28,7 +28,7 @@
                         prepend-inner-icon="mdi-account"
                         filled
                         rounded
-                        v-model="account"
+                        v-model="memAccount"
                       />
                       <v-text-field
                         label="密碼"
@@ -38,7 +38,7 @@
                         filled
                         rounded
                         @click:append="show = !show"
-                        v-model="passwd"
+                        v-model="memPassword"
                       />
                     </v-form>
                     <v-btn color="primary lighten-1" text>忘記密碼？</v-btn>
@@ -60,28 +60,61 @@
         </v-row>
       </v-container>
     </v-main>
+
+    <Snackbar />
   </v-app>
 </template>
 
 <script>
+import Snackbar from "@/components/Snackbar.vue";
+import { mapState, mapMutations } from "vuex";
+
 export default {
   props: {
     source: String,
   },
+  components: { Snackbar },
   data() {
     return {
       show: false,
-      account: "",
-      passwd: "",
+      memAccount: "",
+      memPassword: "",
     };
+  },
+  computed: {
+    ...mapState({
+      popupStatus: (state) => state.popupStatus,
+    }),
   },
   methods: {
     goRegist() {
       this.$router.push({ name: "Register" });
     },
-    login() {
-      this.$router.push({ name: "HomePage" });
+    async login() {
+      try {
+        await this.$api.auth.login({
+          memAccount: this.memAccount,
+          memPassword: this.memPassword,
+        });
+        this.$router.push({ name: "HomePage" });
+        this.setPopupStatus(true, { root: true });
+        this.setPopupDetails(
+          { popupMsgColor: "green", popupMsg: "登入成功" },
+          { root: true }
+        );
+      } catch (err) {
+        console.log(err);
+        this.setPopupStatus(true, { root: true });
+        this.setPopupDetails(
+          { popupMsgColor: "red", popupMsg: "帳號密碼有誤" },
+          { root: true }
+        );
+      }
     },
+    ...mapMutations({
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
+    }),
   },
 };
 </script>

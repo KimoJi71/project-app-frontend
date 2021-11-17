@@ -71,7 +71,7 @@
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             label="出生日期"
-                            prepend-inner-icon="mdi-calendar"
+                            append-icon="mdi-calendar"
                             dense
                             filled
                             rounded

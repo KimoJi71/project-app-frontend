@@ -27,7 +27,13 @@
                 <v-row align="center" justify="center">
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn color="black" icon v-bind="attrs" v-on="on">
+                      <v-btn
+                        color="black"
+                        icon
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="updateProfile()"
+                      >
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
                     </template>
@@ -222,6 +228,9 @@ export default {
     },
     deletePost() {
       //
+    },
+    updateProfile() {
+      this.$router.push({ name: "UpdateProfile" });
     },
     goCollection() {
       this.$router.push({ name: "CollectPost" });

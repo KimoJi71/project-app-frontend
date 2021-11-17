@@ -77,6 +77,14 @@ const routes = [
     },
   },
   {
+    name: "UpdateProfile",
+    path: "/profile-edit/:id",
+    component: () => import("@/pages/profile/UpdateProfile"),
+    meta: {
+      title: "編輯個人資料",
+    },
+  },
+  {
     name: "CollectPost",
     path: "/collections/post/",
     component: () => import("@/pages/collection/collectPost"),

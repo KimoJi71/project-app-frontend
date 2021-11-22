@@ -102,13 +102,16 @@
                         <v-radio label="業務員" value="1" />
                       </v-radio-group>
                       <div v-if="memIdentify === '1'">
-                        <v-select
+                        <v-autocomplete
+                          class="importantIcon"
                           label="所屬公司"
-                          :items="items"
+                          prepend-icon="*"
+                          :items="company"
                           dense
                           filled
                           rounded
                           v-model="memCompany"
+                          :rules="[(v) => !!v || '必填']"
                         />
                         <v-text-field
                           label="公司電話"
@@ -182,6 +185,7 @@
 
 <script>
 import Snackbar from "@/components/Snackbar.vue";
+import company from "@/assets/constant/company.js";
 import { mapState, mapMutations } from "vuex";
 
 export default {
@@ -194,14 +198,14 @@ export default {
     return {
       valid: false,
       show: false,
-      items: [1, 2, 3, 4, 5],
+      company,
 
       memAccount: "",
       memPassword: "",
       memName: "",
-      memGender: null,
+      memGender: "",
       menu: false,
-      memBirth: null,
+      memBirth: "",
       memIdentify: "",
       // 若身份為業務員(memIdentify=1)
       memCompany: "",
@@ -222,8 +226,9 @@ export default {
     },
     async register() {
       try {
+        let res = null;
         if (this.memIdentify === "0") {
-          const res = await this.$api.auth.register({
+          res = await this.$api.auth.register({
             memAccount: this.memAccount,
             memPassword: this.memPassword,
             memIdentify: this.memIdentify,
@@ -231,9 +236,8 @@ export default {
             memGender: this.memGender,
             memBirth: this.memBirth,
           });
-          console.log(res);
         } else {
-          await this.$api.auth.register({
+          res = await this.$api.auth.register({
             memAccount: this.memAccount,
             memPassword: this.memPassword,
             memIdentify: this.memIdentify,
@@ -246,6 +250,7 @@ export default {
             memPhone: this.memPhone,
             memLineID: this.memLineID,
           });
+          console.log(res);
         }
         this.setPopupStatus(true, { root: true });
         this.setPopupDetails(

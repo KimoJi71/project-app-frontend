@@ -81,6 +81,7 @@ import Header from "@/components/Header.vue";
 import Snackbar from "@/components/Snackbar.vue";
 
 export default {
+  name: "HomePage",
   components: {
     Header,
     Snackbar,

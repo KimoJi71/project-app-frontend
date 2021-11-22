@@ -86,8 +86,24 @@ const routes = [
   },
   {
     name: "CollectPost",
-    path: "/collections/post/",
-    component: () => import("@/pages/collection/collectPost"),
+    path: "/collections/post",
+    component: () => import("@/pages/collection/CollectPost"),
+    meta: {
+      title: "收藏",
+    },
+  },
+  {
+    name: "CollectProduct",
+    path: "/collections/product",
+    component: () => import("@/pages/collection/CollectProduct"),
+    meta: {
+      title: "收藏",
+    },
+  },
+  {
+    name: "CollectSalesman",
+    path: "/collections/salesman",
+    component: () => import("@/pages/collection/CollectSalesman"),
     meta: {
       title: "收藏",
     },

@@ -61,6 +61,7 @@
 
 <script>
 export default {
+  name: "Header",
   data() {
     return {
       drawer: false,

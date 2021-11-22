@@ -99,13 +99,13 @@
             <v-col cols="12" md="2">
               <span style="font-size: 14px">可提供服務</span>
             </v-col>
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="1">
               <v-checkbox label="壽險" value="1" />
             </v-col>
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="1">
               <v-checkbox label="產險" value="1" />
             </v-col>
-            <v-col cols="12" md="5">
+            <v-col cols="12" md="7">
               <v-checkbox label="其他" value="1" />
             </v-col>
           </v-row>
@@ -133,6 +133,7 @@
 import Header from "@/components/Header.vue";
 
 export default {
+  name: "UpdateProfile",
   components: {
     Header,
   },

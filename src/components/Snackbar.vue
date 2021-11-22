@@ -27,6 +27,7 @@
 import { mapState } from "vuex";
 
 export default {
+  name: "Snackbar",
   computed: {
     popupStatus: {
       get() {

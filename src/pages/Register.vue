@@ -185,6 +185,7 @@ import Snackbar from "@/components/Snackbar.vue";
 import { mapState, mapMutations } from "vuex";
 
 export default {
+  name: "Register",
   props: {
     source: String,
   },

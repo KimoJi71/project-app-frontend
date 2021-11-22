@@ -111,33 +111,19 @@
       </div>
     </v-card>
 
-    <v-tooltip top>
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary lighten-1"
-          dark
-          fixed
-          right
-          bottom
-          fab
-          v-bind="attrs"
-          v-on="on"
-          @click="goBack()"
-        >
-          <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-      </template>
-      <span>回上一頁</span>
-    </v-tooltip>
+    <BackBtn />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import BackBtn from "@/components/BackBtn.vue";
 
 export default {
+  name: "ProductDetail",
   components: {
     Header,
+    BackBtn,
   },
   data() {
     return {};

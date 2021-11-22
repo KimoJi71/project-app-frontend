@@ -81,20 +81,38 @@
             >
           </v-col>
         </v-row>
-        <v-row justify="center">
+        <v-row justify="center" v-for="data in tableData" :key="data.proNum">
           <v-col cols="12" md="12">
             <v-card elevation="3">
               <v-card-title>
-                南山人壽 ｜ 新活力康祥定期健康保險(NTDD)
+                {{ data.proCompany }} |
+                {{
+                  data.proName.match(`${data.proCompany}`)
+                    ? data.proName.slice(4)
+                    : data.proName
+                }}
               </v-card-title>
               <v-card-text>
                 <v-chip color="red" label outlined>
-                  壽險保障商品、醫療保障商品
+                  {{
+                    data.proBigItem
+                      .split(",")
+                      .map((item) => item)
+                      .join("、")
+                  }}
                 </v-chip>
                 <v-chip class="ml-3" color="success" label outlined>
-                  主約
+                  {{ data.proKind }}
                 </v-chip>
-                <v-chip class="ml-3" color="blue" label outlined> 定期 </v-chip>
+                <v-chip
+                  class="ml-3"
+                  color="blue"
+                  label
+                  outlined
+                  v-if="data.proPeriod !== ''"
+                >
+                  {{ data.proPeriod }}
+                </v-chip>
                 <v-btn
                   text
                   :style="
@@ -127,27 +145,54 @@
         </v-row>
       </v-col>
     </v-row>
+
+    <Loading />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import Loading from "@/components/Loading.vue";
+import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
   name: "Product",
   components: {
     Header,
+    Loading,
   },
   data() {
     return {
       screenWidth: document.body.clientWidth,
       show: false,
+
+      tableData: {},
     };
+  },
+  computed: {
+    ...mapState({
+      productInfo: (state) => state.product.productInfo,
+    }),
   },
   methods: {
     getDetail() {
       this.$router.push({ name: "ProductDetail", params: { id: 1 } });
     },
+    ...mapActions({
+      getProductInfo: "product/getProductInfo",
+    }),
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+    }),
+  },
+  async mounted() {
+    try {
+      await this.getProductInfo();
+      this.tableData = this.productInfo;
+    } catch (err) {
+      console.log(err);
+    }
   },
 };
 </script>

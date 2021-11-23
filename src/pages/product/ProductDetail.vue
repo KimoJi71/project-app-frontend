@@ -3,26 +3,73 @@
     <Header />
     <br /><br /><br />
     <v-card class="mx-auto my-6" max-width="70%" elevation="3">
-      <v-card-title>南山人壽 ｜ 新活力康祥定期健康保險(NTDD)</v-card-title>
+      <v-card-title
+        >{{ tableData.proCompany }} |
+        {{
+          tableData.proName.match(tableData.proCompany)
+            ? tableData.proName.slice(4)
+            : tableData.proName
+        }}</v-card-title
+      >
       <v-card-text>
-        <v-chip color="red" label outlined> 壽險保障商品、醫療保障商品 </v-chip>
-        <v-chip class="ml-3" color="success" label outlined> 主約 </v-chip>
-        <v-chip class="ml-3" color="blue" label outlined> 定期 </v-chip>
+        <v-chip color="red" label outlined v-if="tableData.proBigItem">
+          {{
+            tableData.proBigItem
+              .split(",")
+              .map((item) => item)
+              .join("、")
+          }}
+        </v-chip>
+        <v-chip class="ml-3" color="success" label outlined>
+          {{ tableData.proKind }}
+        </v-chip>
+        <v-chip
+          class="ml-3"
+          color="blue"
+          label
+          outlined
+          v-if="tableData.proPeriod"
+        >
+          {{ tableData.proPeriod }}
+        </v-chip>
 
         <v-list>
-          <v-list-item class="pa-0 mt-4">
+          <v-list-item class="pa-0 mt-4" v-if="tableData.proSmallItem">
             <v-list-item-content>
               <v-list-item-title class="font-weight-bold">
                 <v-icon class="mr-2" color="black">mdi-label</v-icon>
                 商品種類
               </v-list-item-title>
-              <span class="mt-3 pl-9"
-                >定期壽險-台幣 / 重大疾病與重大傷病 / 癌症醫療</span
-              >
+              <span class="mt-3 pl-9">{{
+                tableData.proSmallItem
+                  .split(",")
+                  .map((item) => item)
+                  .join(" / ")
+              }}</span>
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item class="pa-0">
+          <v-list-item class="pa-0" v-if="tableData.proRemark">
+            <v-list-item-content>
+              <v-list-item-title class="font-weight-bold">
+                <v-icon class="mr-2" color="black">mdi-label</v-icon>
+                備註
+              </v-list-item-title>
+              <div class="mt-3 pl-9">
+                <ul>
+                  <li
+                    v-for="(proRemark, idx) in tableData.proRemark.split(',')"
+                    :key="idx"
+                    :class="idx === 0 ? '' : 'mt-3'"
+                  >
+                    {{ proRemark }}
+                  </li>
+                </ul>
+              </div>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item class="pa-0" v-if="tableData.proFeature">
             <v-list-item-content>
               <v-list-item-title class="font-weight-bold">
                 <v-icon class="mr-2" color="black">mdi-label</v-icon>
@@ -30,22 +77,31 @@
               </v-list-item-title>
               <div class="mt-3 pl-9">
                 <ul>
-                  <li>投保年齡：15足歲~40歲</li>
-                  <li class="mt-3">7項重大疾病，輕/重度均有保障</li>
-                  <li class="mt-3">加強人生黃金期的階段性保障</li>
+                  <li
+                    v-for="(proFeature, idx) in tableData.proFeature.split(',')"
+                    :key="idx"
+                    :class="idx === 0 ? '' : 'mt-3'"
+                  >
+                    {{ proFeature }}
+                  </li>
                 </ul>
               </div>
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item class="pa-0">
+          <v-list-item class="pa-0" v-if="tableData.proContent">
             <v-list-item-content>
               <v-list-item-title class="font-weight-bold">
                 <v-icon class="mr-2" color="black">mdi-label</v-icon>
                 保障內容
               </v-list-item-title>
               <span class="mt-3 pl-9">
-                身故給付 / 完全失能給付 / 重大疾病 / 豁免保費
+                {{
+                  tableData.proContent
+                    .split(",")
+                    .map((item) => item)
+                    .join(" / ")
+                }}
               </span>
             </v-list-item-content>
           </v-list-item>
@@ -65,7 +121,7 @@
                       outlined
                       v-bind="attrs"
                       v-on="on"
-                      href="https://www.nanshanlife.com.tw/NanshanWeb/file/DOCUMENT/7341"
+                      :href="tableData.proDM"
                       target="_blank"
                     >
                       <v-icon>mdi-clipboard-minus</v-icon>
@@ -73,16 +129,16 @@
                   </template>
                   <span>DM</span>
                 </v-tooltip>
-                <v-tooltip bottom>
+                <v-tooltip bottom v-if="tableData.proTerms">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      class="ml-3"
+                      class="ml-5"
                       color="green"
                       fab
                       outlined
                       v-bind="attrs"
                       v-on="on"
-                      href="https://www.nanshanlife.com.tw/NanshanWeb/file/DOCUMENT/7361"
+                      :href="tableData.proTerms"
                       target="_blank"
                     >
                       <v-icon>mdi-file-document</v-icon>
@@ -111,27 +167,71 @@
       </div>
     </v-card>
 
+    <Loading />
     <BackBtn />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import Loading from "@/components/Loading.vue";
 import BackBtn from "@/components/BackBtn.vue";
+import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
   name: "ProductDetail",
   components: {
     Header,
+    Loading,
     BackBtn,
   },
   data() {
-    return {};
+    return {
+      proNum: parseInt(this.$route.params.proNum),
+      tableData: {
+        proNum: null,
+        proCompany: "",
+        proBigItem: "",
+        proSmallItem: "",
+        proKind: "",
+        proPeriod: "",
+        proName: "",
+        proRemark: "",
+        proFeature: "",
+        proContent: "",
+        proDM: "",
+        proTerms: "",
+        proStatus: "",
+      },
+    };
+  },
+  computed: {
+    ...mapState({
+      productInfo: (state) => state.product.productInfo,
+    }),
   },
   methods: {
     goBack() {
       this.$router.back(-1);
     },
+    ...mapActions({
+      getProductInfo: "product/getProductInfo",
+    }),
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+    }),
+  },
+  async mounted() {
+    try {
+      await this.getProductInfo("");
+      const data = this.productInfo.filter((item) => {
+        return item.proNum === this.proNum;
+      });
+      this.tableData = data[0];
+    } catch (err) {
+      console.log(err);
+    }
   },
 };
 </script>

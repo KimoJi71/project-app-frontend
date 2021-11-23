@@ -3,12 +3,21 @@ const state = () => ({
 });
 
 const actions = {
-  async getProductInfo({ commit }) {
+  // 取得商品
+  async getProductInfo({ commit }, params) {
     try {
       commit("setLoadingStatus", null, { root: true });
       commit("setLoadingMsg", "Loading...", { root: true });
 
-      const productInfo = await this._vm.$api.product.getProductInfo();
+      if (params !== "") {
+        params.company = params.company === null ? "" : params.company;
+        params.bigItem = params.bigItem === null ? "" : params.bigItem;
+        params.kind = params.kind === null ? "" : params.kind;
+        params.smallItem = params.smallItem === null ? "" : params.smallItem;
+        params.content = params.content === null ? "" : params.content;
+      }
+
+      const productInfo = await this._vm.$api.product.getProductInfo(params);
       commit("setProductInfo", productInfo);
       commit("setLoadingStatus", null, { root: true });
       commit("setLoadingMsg", "", { root: true });

@@ -62,7 +62,7 @@ const routes = [
   },
   {
     name: "ProductDetail",
-    path: "/products/detail/:id",
+    path: "/products/detail/:proNum",
     component: () => import("@/pages/product/ProductDetail"),
     meta: {
       title: "保險商品",

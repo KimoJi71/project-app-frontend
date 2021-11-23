@@ -4,7 +4,8 @@
     <Header />
     <br /><br /><br />
     <v-row class="mt-4" justify="center">
-      <v-col cols="12" md="2">
+      <!-- 篩選區塊 -->
+      <v-col cols="12" md="3">
         <v-btn icon large v-if="screenWidth < 960" @click="show = !show">
           <v-icon large>mdi-dots-grid</v-icon>
         </v-btn>
@@ -15,62 +16,67 @@
           v-if="screenWidth > 960 || show"
         >
           <v-card-text>
-            <v-select
+            <v-autocomplete
               label="保險公司"
               clearable
               chips
               dense
               solo
-              :items="[1, 2, 3]"
+              :items="proCompany"
+              v-model="params.company"
             />
-            <v-select
+            <v-autocomplete
               label="保險屬性"
               clearable
               chips
               dense
               solo
-              :items="[1, 2, 3]"
+              :items="proBigItem"
+              v-model="params.bigItem"
             />
-            <v-select
+            <v-autocomplete
               label="主附約"
               clearable
               chips
               dense
               solo
-              :items="[1, 2, 3]"
+              :items="proKind"
+              v-model="params.kind"
             />
-            <v-select
+            <v-autocomplete
               label="保險種類"
               clearable
               chips
               dense
               solo
-              :items="[1, 2, 3]"
+              :items="proSmallItem"
+              v-model="params.smallItem"
             />
-            <v-select
-              label="保險特色"
-              clearable
-              chips
-              dense
-              solo
-              :items="[1, 2, 3]"
-            />
-            <v-select
+            <v-autocomplete
               label="保障內容"
               clearable
               chips
               dense
               solo
-              :items="[1, 2, 3]"
+              :items="proContent"
+              v-model="params.content"
             />
           </v-card-text>
           <div class="text-center">
-            <v-btn class="mb-6" color="primary" dark rounded large>篩選</v-btn>
+            <v-btn
+              class="mb-6"
+              color="primary"
+              dark
+              rounded
+              large
+              @click="filter()"
+              >篩選</v-btn
+            >
           </div>
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="9">
+      <v-col cols="12" md="8">
         <v-row justify="center">
           <v-col cols="12" sm="4" md="6">
             <v-btn color="primary lighten-1" tile block depressed>最新</v-btn>
@@ -81,13 +87,14 @@
             >
           </v-col>
         </v-row>
+        <!-- 商品資料render -->
         <v-row justify="center" v-for="data in tableData" :key="data.proNum">
           <v-col cols="12" md="12">
             <v-card elevation="3">
               <v-card-title>
                 {{ data.proCompany }} |
                 {{
-                  data.proName.match(`${data.proCompany}`)
+                  data.proName.match(data.proCompany)
                     ? data.proName.slice(4)
                     : data.proName
                 }}
@@ -118,7 +125,7 @@
                   :style="
                     screenWidth < 960 ? 'margin-top: 20px' : 'float: right'
                   "
-                  @click="getDetail()"
+                  @click="getDetail(data.proNum)"
                 >
                   <span class="primary--text">
                     了解更多
@@ -143,6 +150,15 @@
             </v-card>
           </v-col>
         </v-row>
+
+        <div class="text-center mt-5">
+          <v-pagination
+            v-model="page"
+            :length="parseInt(total / 10 + 1)"
+            :total-visible="7"
+            @input="changePage()"
+          />
+        </div>
       </v-col>
     </v-row>
 
@@ -153,6 +169,13 @@
 <script>
 import Header from "@/components/Header.vue";
 import Loading from "@/components/Loading.vue";
+import {
+  proCompany,
+  proBigItem,
+  proKind,
+  proSmallItem,
+  proContent,
+} from "@/assets/constant/product.js";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -165,8 +188,23 @@ export default {
     return {
       screenWidth: document.body.clientWidth,
       show: false,
+      page: 1,
+
+      proCompany,
+      proBigItem,
+      proKind,
+      proSmallItem,
+      proContent,
+      params: {
+        company: "",
+        bigItem: "",
+        kind: "",
+        smallItem: "",
+        content: "",
+      },
 
       tableData: {},
+      total: 0,
     };
   },
   computed: {
@@ -175,8 +213,23 @@ export default {
     }),
   },
   methods: {
-    getDetail() {
-      this.$router.push({ name: "ProductDetail", params: { id: 1 } });
+    filter() {
+      this.getProducts(this.params, 0, 10);
+    },
+    getDetail(proNum) {
+      this.$router.push({ name: "ProductDetail", params: { proNum: proNum } });
+    },
+    changePage() {
+      this.getProducts(this.params, this.page * 10 - 10, this.page * 10);
+    },
+    async getProducts(params, from, limit) {
+      try {
+        await this.getProductInfo(params);
+        this.total = this.productInfo.length;
+        this.tableData = this.productInfo.slice(from, limit);
+      } catch (err) {
+        console.log(err);
+      }
     },
     ...mapActions({
       getProductInfo: "product/getProductInfo",
@@ -186,13 +239,8 @@ export default {
       setLoadingMsg: "setLoadingMsg",
     }),
   },
-  async mounted() {
-    try {
-      await this.getProductInfo();
-      this.tableData = this.productInfo;
-    } catch (err) {
-      console.log(err);
-    }
+  mounted() {
+    this.getProducts(this.params, 0, 10);
   },
 };
 </script>

@@ -167,8 +167,8 @@
       </div>
     </v-card>
 
-    <Loading />
     <BackBtn />
+    <Loading />
   </div>
 </template>
 

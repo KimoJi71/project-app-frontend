@@ -16,7 +16,7 @@
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
-      <v-list-item link to="/profile/1">
+      <v-list-item v-if="memNum" link :to="`/profile/${memNum}`">
         <v-list-item-avatar color="grey">
           <v-icon dark>mdi-account</v-icon>
         </v-list-item-avatar>
@@ -46,12 +46,20 @@
       <v-divider />
 
       <v-list dense>
-        <v-list-item link to="/">
+        <v-list-item v-if="memNum" link @click="logout()">
           <v-list-item-icon>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>登出</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-else link @click="login()">
+          <v-list-item-icon>
+            <v-icon>mdi-login</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>登入</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -64,6 +72,7 @@ export default {
   name: "Header",
   data() {
     return {
+      memNum: this.$cookies.get("user_session"),
       drawer: false,
       items: [
         { name: "首頁", icon: "mdi-home", href: "/posts" },
@@ -72,6 +81,15 @@ export default {
         // { name: "幫助中心", icon: "mdi-lightbulb", href: "/help" },
       ],
     };
+  },
+  methods: {
+    logout() {
+      this.$router.push({ name: "Login" });
+      this.$cookies.remove("user_session");
+    },
+    login() {
+      this.$router.push({ name: "Login" });
+    },
   },
 };
 </script>

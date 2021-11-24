@@ -93,11 +93,13 @@ export default {
     },
     async login() {
       try {
-        await this.$api.auth.login({
+        const res = await this.$api.auth.login({
           memAccount: this.memAccount,
           memPassword: this.memPassword,
         });
         this.$router.push({ name: "HomePage" });
+        // 將使用者記錄在cookie中，以保留登入狀態
+        this.$cookies.set("user_session", res.memNum);
         this.setPopupStatus(true, { root: true });
         this.setPopupDetails(
           { popupMsgColor: "green", popupMsg: "登入成功" },

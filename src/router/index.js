@@ -10,6 +10,7 @@ const routes = [
     component: () => import("@/pages/Login"),
     meta: {
       title: "登入",
+      keepAlive: false,
     },
   },
   {
@@ -18,6 +19,7 @@ const routes = [
     component: () => import("@/pages/Register"),
     meta: {
       title: "註冊",
+      keepAlive: false,
     },
   },
   {
@@ -25,15 +27,17 @@ const routes = [
     path: "/posts",
     component: () => import("@/pages/post/HomePage"),
     meta: {
-      title: "首頁",
+      title: "文章",
+      keepAlive: false,
     },
   },
   {
     name: "PostDetail",
-    path: "/posts/detail/:id",
+    path: "/posts/detail/:postNum",
     component: () => import("@/pages/post/PostDetail"),
     meta: {
-      title: "首頁",
+      title: "文章",
+      keepAlive: false,
     },
   },
   {
@@ -42,14 +46,16 @@ const routes = [
     component: () => import("@/pages/post/CreatePost"),
     meta: {
       title: "新增文章",
+      keepAlive: false,
     },
   },
   {
     name: "UpdatePost",
-    path: "/posts/updatePost",
+    path: "/posts/updatePost/:postNum",
     component: () => import("@/pages/post/UpdatePost"),
     meta: {
       title: "編輯文章",
+      keepAlive: false,
     },
   },
   {
@@ -58,6 +64,7 @@ const routes = [
     component: () => import("@/pages/product/Product"),
     meta: {
       title: "保險商品",
+      keepAlive: true,
     },
   },
   {
@@ -66,6 +73,7 @@ const routes = [
     component: () => import("@/pages/product/ProductDetail"),
     meta: {
       title: "保險商品",
+      keepAlive: false,
     },
   },
   {
@@ -74,6 +82,7 @@ const routes = [
     component: () => import("@/pages/profile/Profile"),
     meta: {
       title: "個人頁面",
+      keepAlive: false,
     },
   },
   {
@@ -82,6 +91,7 @@ const routes = [
     component: () => import("@/pages/profile/UpdateProfile"),
     meta: {
       title: "編輯個人資料",
+      keepAlive: false,
     },
   },
   {
@@ -90,6 +100,7 @@ const routes = [
     component: () => import("@/pages/collection/CollectPost"),
     meta: {
       title: "收藏",
+      keepAlive: true,
     },
   },
   {
@@ -98,6 +109,7 @@ const routes = [
     component: () => import("@/pages/collection/CollectProduct"),
     meta: {
       title: "收藏",
+      keepAlive: true,
     },
   },
   {
@@ -106,6 +118,7 @@ const routes = [
     component: () => import("@/pages/collection/CollectSalesman"),
     meta: {
       title: "收藏",
+      keepAlive: true,
     },
   },
 ];

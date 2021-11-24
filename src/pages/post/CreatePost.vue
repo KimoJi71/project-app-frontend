@@ -3,7 +3,7 @@
     <Header />
     <br /><br /><br />
     <v-card class="mx-auto mt-6" max-width="80%" elevation="3">
-      <v-card-title>新增貼文</v-card-title>
+      <v-card-title>新增文章</v-card-title>
       <v-divider class="ml-4" />
       <v-card-text>
         <v-list-item-avatar color="grey">
@@ -16,14 +16,16 @@
             outlined
             rows="10"
             no-resize
-            v-model="text"
+            v-model="postContent"
           />
         </v-row>
         <v-row align="center" justify="center" class="mb-4">
           <v-btn class="mr-10" color="grey" outlined @click="goBack()"
             >返回</v-btn
           >
-          <v-btn color="blue darken-2" dark depressed>儲存</v-btn>
+          <v-btn color="blue darken-2" dark depressed @click="save()"
+            >儲存</v-btn
+          >
         </v-row>
       </v-card-text>
     </v-card>
@@ -32,6 +34,7 @@
 
 <script>
 import Header from "@/components/Header.vue";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "CreatePost",
@@ -40,13 +43,40 @@ export default {
   },
   data() {
     return {
-      text: "",
+      postContent: "",
     };
   },
+  computed: {
+    ...mapState({
+      popupStatus: (state) => state.popupStatus,
+    }),
+  },
   methods: {
+    async save() {
+      try {
+        const res = await this.$api.post.createPost({
+          memNum: this.$cookies.get("user_session"),
+          postContent: this.postContent,
+        });
+        if (res.message === "文章新增成功") {
+          this.$router.push({ name: "HomePage" });
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "green", popupMsg: "文章新增成功" },
+            { root: true }
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
     goBack() {
       this.$router.push({ name: "HomePage" });
     },
+    ...mapMutations({
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
+    }),
   },
 };
 </script>

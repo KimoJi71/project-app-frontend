@@ -21,7 +21,7 @@
           <v-icon dark>mdi-account</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title>KimoJi</v-list-item-title>
+          <v-list-item-title>{{ memName }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
@@ -68,11 +68,12 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 export default {
   name: "Header",
   data() {
     return {
-      memNum: this.$cookies.get("user_session"),
+      memNum: parseInt(this.$cookies.get("user_session")),
       drawer: false,
       items: [
         { name: "首頁", icon: "mdi-home", href: "/posts" },
@@ -80,7 +81,13 @@ export default {
         // { name: "排行榜", icon: "mdi-star", href: "/rank" },
         // { name: "幫助中心", icon: "mdi-lightbulb", href: "/help" },
       ],
+      memName: "",
     };
+  },
+  computed: {
+    ...mapState({
+      profile: (state) => state.member.profile,
+    }),
   },
   methods: {
     logout() {
@@ -90,6 +97,19 @@ export default {
     login() {
       this.$router.push({ name: "Login" });
     },
+    ...mapActions({
+      getProfile: "member/getProfile",
+    }),
+  },
+  async mounted() {
+    if (this.memNum) {
+      try {
+        await this.getProfile(this.memNum);
+        this.memName = this.profile.data.memName;
+      } catch (err) {
+        console.log(err);
+      }
+    }
   },
 };
 </script>

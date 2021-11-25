@@ -67,7 +67,7 @@ export default {
           postContent: this.postData.postContent,
         });
         if (res.message === "文章編輯成功") {
-          this.$router.push({ name: "HomePage" });
+          this.$router.back(-1);
           this.setPopupStatus(true, { root: true });
           this.setPopupDetails(
             { popupMsgColor: "green", popupMsg: "文章編輯成功" },

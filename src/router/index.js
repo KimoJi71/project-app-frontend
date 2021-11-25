@@ -6,7 +6,7 @@ Vue.use(VueRouter);
 const routes = [
   {
     name: "Login",
-    path: "/",
+    path: "/login",
     component: () => import("@/pages/Login"),
     meta: {
       title: "登入",
@@ -78,7 +78,7 @@ const routes = [
   },
   {
     name: "Profile",
-    path: "/profile/:id",
+    path: "/profile/:memNum",
     component: () => import("@/pages/profile/Profile"),
     meta: {
       title: "個人頁面",
@@ -87,7 +87,7 @@ const routes = [
   },
   {
     name: "UpdateProfile",
-    path: "/profile-edit/:id",
+    path: "/profile-edit/:memNum",
     component: () => import("@/pages/profile/UpdateProfile"),
     meta: {
       title: "編輯個人資料",
@@ -120,6 +120,10 @@ const routes = [
       title: "收藏",
       keepAlive: true,
     },
+  },
+  {
+    path: "*",
+    redirect: { name: "Products" },
   },
 ];
 

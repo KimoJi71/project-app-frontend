@@ -88,7 +88,7 @@
           </v-col>
         </v-row>
         <!-- 商品資料render -->
-        <v-row justify="center" v-for="data in tableData" :key="data.proNum">
+        <v-row justify="center" v-for="data in proData" :key="data.proNum">
           <v-col cols="12" md="12">
             <v-card elevation="3">
               <v-card-title>
@@ -203,7 +203,7 @@ export default {
         content: "",
       },
 
-      tableData: {},
+      proData: {},
       total: 0,
     };
   },
@@ -226,7 +226,7 @@ export default {
       try {
         await this.getProductInfo(params);
         this.total = this.productInfo.length;
-        this.tableData = this.productInfo.slice(from, limit);
+        this.proData = this.productInfo.slice(from, limit);
       } catch (err) {
         console.log(err);
       }

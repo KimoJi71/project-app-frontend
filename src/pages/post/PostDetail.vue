@@ -52,7 +52,7 @@
 
         <v-divider class="mt-2" />
 
-        <!-- 留言內容 -->
+        <!-- 留言區塊 -->
         <v-row class="mt-4">
           <v-col class="d-flex" cols="12">
             <v-list-item-avatar color="grey">
@@ -110,8 +110,21 @@
                 </v-list>
               </v-menu>
               <div class="black--text mb-4 ml-14">
+                <v-textarea
+                  v-if="isEdit && comment.memNum === memNum"
+                  placeholder="請輸入內容"
+                  class="mr-4"
+                  append-icon="mdi-pencil"
+                  no-resize
+                  rows="2"
+                  outlined
+                  v-model="comment.commentContent"
+                  @click:append="
+                    updateComment(comment.commentNum, comment.commentContent)
+                  "
+                />
                 <!-- eslint-disable-next-line prettier/prettier -->
-                <span style="white-space: pre-wrap">{{ comment.commentContent }}</span>
+                <span v-else style="white-space: pre-wrap">{{ comment.commentContent }}</span>
               </div>
             </v-col>
           </v-row>
@@ -146,7 +159,7 @@ export default {
       menuItems: [
         {
           title: "編輯",
-          action: (commentNum) => this.updateComment(commentNum),
+          action: () => (this.isEdit = true),
         },
         {
           title: "刪除",
@@ -155,6 +168,7 @@ export default {
       ],
       memNum: parseInt(this.$cookies.get("user_session")),
       commentContent: "",
+      isEdit: false,
       postData: {
         postNum: parseInt(this.$route.params.postNum),
         postContent: "",
@@ -201,15 +215,32 @@ export default {
         console.log(err);
       }
     },
-    updateComment(commentNum) {
-      console.log(commentNum);
+    async updateComment(commentNum, commentContent) {
+      try {
+        this.setLoadingStatus(null, { root: true });
+        this.setLoadingMsg("Loading...", { root: true });
+        const res = await this.$api.comment.updateComment(commentNum, {
+          commentContent,
+        });
+        if (res.message === "留言編輯成功") {
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "green", popupMsg: "留言編輯成功" },
+            { root: true }
+          );
+          this.setLoadingStatus(null, { root: true });
+          this.setLoadingMsg("", { root: true });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      this.isEdit = false;
     },
     async deleteComment(commentNum) {
       try {
         this.setLoadingStatus(null, { root: true });
         this.setLoadingMsg("Loading...", { root: true });
         const res = await this.$api.comment.deleteComment(commentNum);
-        console.log(res);
         if (res.message === "留言刪除成功") {
           this.setPopupStatus(true, { root: true });
           this.setPopupDetails(
@@ -242,8 +273,12 @@ export default {
     },
     async getCommentsInfo() {
       try {
+        this.setLoadingStatus(null, { root: true });
+        this.setLoadingMsg("Loading...", { root: true });
         const res = await this.$api.comment.getComments(this.postData.postNum);
         this.comments = res;
+        this.setLoadingStatus(null, { root: true });
+        this.setLoadingMsg("", { root: true });
       } catch (err) {
         console.log(err);
       }

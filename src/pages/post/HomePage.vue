@@ -43,11 +43,10 @@
               ? post.postContent.slice(0, 50)
               : post.postContent
           }}</span>
-          <router-link
-            class="text-decoration-underline"
+          <span
+            class="text-decoration-underline primary--text"
             v-if="post.postContent.length > 50"
-            :to="`/posts/detail/${post.postNum}`"
-            >...READ MORE</router-link
+            >...READ MORE</span
           >
         </div>
         <v-divider class="mt-4" />

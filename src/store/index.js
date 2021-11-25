@@ -1,8 +1,9 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import product from "./modules/product";
 import post from "./modules/post";
+import product from "./modules/product";
+import member from "./modules/member";
 
 Vue.use(Vuex);
 
@@ -30,7 +31,8 @@ export default new Vuex.Store({
     },
   },
   modules: {
-    product,
     post,
+    product,
+    member,
   },
 });

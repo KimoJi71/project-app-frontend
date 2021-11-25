@@ -125,21 +125,21 @@
                           <v-col cols="12" md="3">
                             <v-checkbox
                               label="壽險"
-                              value="1"
+                              value="壽險"
                               v-model="memService"
                             />
                           </v-col>
                           <v-col cols="12" md="3">
                             <v-checkbox
                               label="產險"
-                              value="2"
+                              value="產險"
                               v-model="memService"
                             />
                           </v-col>
                           <v-col cols="12" md="3">
                             <v-checkbox
                               label="其他"
-                              value="3"
+                              value="其他"
                               v-model="memService"
                             />
                           </v-col>

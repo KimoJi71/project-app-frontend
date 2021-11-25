@@ -1,19 +1,17 @@
 const state = () => ({
-  posts: {},
+  profile: {},
 });
 
 const actions = {
-  // 取得文章
-  async getPosts({ commit }) {
+  async getProfile({ commit }, memNum) {
     try {
       commit("setLoadingStatus", null, { root: true });
       commit("setLoadingMsg", "Loading...", { root: true });
 
-      const posts = await this._vm.$api.post.getPosts();
-      commit("setPosts", posts);
+      const profile = await this._vm.$api.member.getProfile(memNum);
+      commit("setProfile", profile);
       commit("setLoadingStatus", null, { root: true });
       commit("setLoadingMsg", "", { root: true });
-      return posts;
     } catch (err) {
       console.log(err);
     }
@@ -21,8 +19,8 @@ const actions = {
 };
 
 const mutations = {
-  setPosts(state, posts) {
-    state.posts = posts;
+  setProfile(state, profile) {
+    state.profile = profile;
   },
 };
 

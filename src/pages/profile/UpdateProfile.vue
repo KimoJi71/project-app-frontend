@@ -18,7 +18,12 @@
           </v-avatar>
         </v-badge>
       </v-row>
-      <v-row class="mb-4" align="center" justify="center">
+      <v-row
+        class="mb-4"
+        align="center"
+        justify="center"
+        v-if="profileInfo.memIdentify === 1"
+      >
         <a class="blue--text">切換帳號</a>
       </v-row>
       <v-divider class="ml-4" />
@@ -26,8 +31,23 @@
         <v-form>
           <v-row class="mt-1" no-gutters align="center" justify="center">
             <v-col cols="12" md="5">
-              <v-text-field label="暱稱" dense filled rounded />
-              <v-text-field label="身份" dense disabled filled rounded />
+              <v-text-field
+                label="暱稱"
+                dense
+                filled
+                rounded
+                v-model="profileInfo.memName"
+              />
+              <v-radio-group
+                dense
+                row
+                disabled
+                v-model="profileInfo.memIdentify"
+              >
+                <span style="font-size: 14px">身份&emsp;&emsp;</span>
+                <v-radio label="保戶" :value="0" />
+                <v-radio label="業務員" :value="1" />
+              </v-radio-group>
             </v-col>
             <v-col cols="12" md="5" offset-md="1">
               <v-textarea
@@ -126,28 +146,57 @@
         </v-row>
       </v-card-text>
     </v-card>
+
+    <Loading />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import Loading from "@/components/Loading.vue";
+import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
   name: "UpdateProfile",
   components: {
     Header,
+    Loading,
   },
   data() {
     return {
+      memNum: parseInt(this.$route.params.memNum),
       items: [1, 2, 3, 4, 5],
       menu: false,
       memBirth: null,
+      profileInfo: {},
     };
+  },
+  computed: {
+    ...mapState({
+      profile: (state) => state.member.profile,
+    }),
   },
   methods: {
     goBack() {
       this.$router.back(-1);
     },
+    ...mapActions({
+      getProfile: "member/getProfile",
+    }),
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+    }),
+  },
+  async mounted() {
+    if (this.memNum) {
+      try {
+        await this.getProfile(this.memNum);
+        this.profileInfo = this.profile.data;
+      } catch (err) {
+        console.log(err);
+      }
+    }
   },
 };
 </script>

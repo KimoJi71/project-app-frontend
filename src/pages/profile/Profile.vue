@@ -18,11 +18,13 @@
             <v-list-item>
               <v-list-item-content class="pa-0 ma-0">
                 <div align="center" justify="center">
-                  <p class="text-h6">abcdefghijk</p>
+                  <p class="text-h6">{{ profileInfo.memName }}</p>
                 </div>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item>
+            <v-list-item
+              v-if="memNum === parseInt($cookies.get('user_session'))"
+            >
               <v-list-item-content>
                 <v-row align="center" justify="center">
                   <v-tooltip bottom>
@@ -59,66 +61,83 @@
             </v-list-item>
           </v-list>
 
-          <v-divider />
+          <div v-if="profileInfo.memIdentify === 1">
+            <v-divider />
 
-          <v-list dense>
-            <v-list-item two-line v-for="item in profileInfo" :key="item.title">
-              <v-btn outlined icon :color="item.color">
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-btn>
-              <v-list-item-content class="ml-4">
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-                <v-list-item-subtitle>{{ item.content }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+            <v-list dense>
+              <v-list-item
+                two-line
+                v-for="item in profileItem"
+                :key="item.title"
+              >
+                <v-btn outlined icon :color="item.color">
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-btn>
+                <v-list-item-content class="ml-4">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    item.content ? item.content : "無"
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
 
-          <v-divider />
+            <v-divider />
 
-          <v-list>
-            <v-list-item class="pa-0">
-              <v-list-item-content>
-                <v-row align="center" justify="center">
-                  <v-btn icon>
-                    <v-icon color="red">mdi-heart-outline</v-icon>
-                  </v-btn>
-                  <v-btn icon>
-                    <v-icon color="warning">mdi-alert</v-icon>
-                  </v-btn>
-                  <v-btn icon>
-                    <v-icon color="success">mdi-share</v-icon>
-                  </v-btn>
-                  <v-btn icon>
-                    <v-icon color="blue">mdi-bookmark-outline</v-icon>
-                  </v-btn>
-                </v-row>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+            <v-list>
+              <v-list-item class="pa-0">
+                <v-list-item-content>
+                  <v-row align="center" justify="center">
+                    <v-btn icon>
+                      <v-icon color="red">mdi-heart-outline</v-icon>
+                    </v-btn>
+                    <v-btn icon>
+                      <v-icon color="warning">mdi-alert</v-icon>
+                    </v-btn>
+                    <v-btn icon>
+                      <v-icon color="success">mdi-share</v-icon>
+                    </v-btn>
+                    <v-btn icon>
+                      <v-icon color="blue">mdi-bookmark-outline</v-icon>
+                    </v-btn>
+                  </v-row>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </div>
         </v-card>
       </v-col>
 
       <!-- 個人簡介 -->
       <v-col class="mt-3" cols="12" md="9">
-        <v-row justify="center">
+        <v-row justify="center" v-if="profileInfo.memIntro">
           <v-card width="90%">
-            <v-card-text class="black--text"
-              >大家好，我是abcdefghijk，希望能成為您的理財顧問</v-card-text
-            >
+            <v-card-text class="black--text" style="white-space: pre-wrap">{{
+              profileInfo.memIntro
+            }}</v-card-text>
           </v-card>
         </v-row>
         <v-row justify="center">
-          <v-divider class="my-6 mx-11" />
+          <v-divider class="my-6 mx-11" v-if="profileInfo.memIntro" />
         </v-row>
         <!-- 文章 -->
-        <v-row justify="center">
-          <v-card class="mb-6" max-width="90%" elevation="3">
+        <v-row justify="center" v-for="post in postsData" :key="post.postNum">
+          <v-card class="mb-4" width="90%" elevation="3">
             <v-card-text>
               <v-list-item-avatar color="grey">
                 <v-icon dark>mdi-account</v-icon>
               </v-list-item-avatar>
-              <span>abcxxxxx · 5小時前</span>
-              <v-menu offset-x rounded="lg">
+              <span
+                >{{ post.memName }} ·
+                {{
+                  $moment(post.postCreateAt).format("YYYY/MM/DD HH:mm:ss")
+                }}</span
+              >
+              <v-menu
+                offset-x
+                rounded="lg"
+                v-if="memNum === parseInt($cookies.get('user_session'))"
+              >
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     color="grey"
@@ -135,31 +154,40 @@
                   <v-list-item
                     v-for="(item, idx) in menuItems"
                     :key="idx"
-                    @click="item.action"
+                    @click="item.action(post.postNum)"
                   >
                     <v-list-item-title>{{ item.title }}</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>
-              <div class="black--text mt-2">
-                <span>
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a type
-                  specimen book
-                </span>
-                <router-link
-                  class="text-decoration-underline"
-                  to="/posts/detail/1"
-                  >...READ MORE</router-link
+              <div
+                class="black--text mt-2"
+                style="cursor: pointer"
+                @click="goDetail(post.postNum)"
+              >
+                <span style="white-space: pre-wrap">{{
+                  post.postContent.length > 50
+                    ? post.postContent.slice(0, 50)
+                    : post.postContent
+                }}</span>
+                <span
+                  class="text-decoration-underline primary--text"
+                  v-if="post.postContent.length > 50"
+                  >...READ MORE</span
                 >
               </div>
               <v-divider class="mt-4" />
-              <div class="mt-2">
-                <v-btn icon>
-                  <v-icon color="red">mdi-heart-outline</v-icon>
-                </v-btn>
+              <div class="mt-4 mb-0">
+                <v-badge
+                  :content="post.likeNumber === 0 ? '0' : post.likeNumber"
+                  color="red"
+                  offset-x="10"
+                  offset-y="10"
+                >
+                  <v-btn icon>
+                    <v-icon color="red">mdi-heart-outline</v-icon>
+                  </v-btn>
+                </v-badge>
                 <v-btn icon>
                   <v-icon color="warning">mdi-alert</v-icon>
                 </v-btn>
@@ -169,73 +197,148 @@
                 <v-btn icon>
                   <v-icon color="blue">mdi-bookmark-outline</v-icon>
                 </v-btn>
-                <span class="mt-2" style="float: right">共 2 則留言</span>
+                <span class="mt-2" style="float: right"
+                  >共 {{ post.commentNumber }} 則留言</span
+                >
               </div>
             </v-card-text>
           </v-card>
         </v-row>
       </v-col>
     </v-row>
+
+    <Loading />
+    <Snackbar />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import Snackbar from "@/components/Snackbar.vue";
+import Loading from "@/components/Loading.vue";
+import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
   name: "Profile",
   components: {
     Header,
+    Snackbar,
+    Loading,
   },
   data() {
     return {
+      memNum: parseInt(this.$route.params.memNum),
       screenWidth: document.body.clientWidth,
       show: false,
-      profileInfo: [
-        {
-          icon: "mdi-domain",
-          color: "red",
-          title: "所屬公司",
-          content: "永達保經",
-        },
+      menuItems: [
+        { title: "編輯", action: (postNum) => this.updatePost(postNum) },
+        { title: "刪除", action: (postNum) => this.deletePost(postNum) },
+      ],
+      profileItem: [
+        { icon: "mdi-domain", color: "red", title: "所屬公司", content: "" },
         {
           icon: "mdi-check",
-          color: "blur-grey",
+          color: "blue-grey",
           title: "提供服務",
-          content: "壽險 / 產險",
+          content: "",
         },
-        {
-          icon: "mdi-phone",
-          color: "blue",
-          title: "電話",
-          content: "0912000111",
-        },
-        {
-          icon: "fab fa-line",
-          color: "green",
-          title: "Line ID",
-          content: "0912000111",
-        },
+        { icon: "mdi-phone", color: "blue", title: "電話", content: "" },
+        { icon: "fab fa-line", color: "green", title: "Line ID", content: "" },
       ],
-      menuItems: [
-        { title: "編輯", action: () => this.updatePost() },
-        { title: "刪除", action: () => this.deletePost() },
-      ],
+      profileInfo: {},
+      postsData: {},
     };
   },
+  computed: {
+    ...mapState({
+      popupStatus: (state) => state.popupStatus,
+      posts: (state) => state.post.posts,
+      profile: (state) => state.member.profile,
+    }),
+  },
   methods: {
-    updatePost() {
-      this.$router.push({ name: "UpdatePost" });
+    goDetail(postNum) {
+      this.$router.push({ name: "PostDetail", params: { postNum: postNum } });
     },
-    deletePost() {
-      //
+    updatePost(postNum) {
+      this.$router.push({ name: "UpdatePost", params: { postNum: postNum } });
+    },
+    async deletePost(postNum) {
+      try {
+        const res = await this.$api.post.deletePost(postNum);
+        if (res.message === "文章刪除成功") {
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "green", popupMsg: "文章刪除成功" },
+            { root: true }
+          );
+          // 刷新頁面
+          this.getPostsInfo();
+        }
+      } catch (err) {
+        this.setPopupStatus(true, { root: true });
+        this.setPopupDetails(
+          { popupMsgColor: "red", popupMsg: "文章刪除失敗" },
+          { root: true }
+        );
+        console.log(err);
+      }
     },
     updateProfile() {
-      this.$router.push({ name: "UpdateProfile" });
+      this.$router.push({
+        name: "UpdateProfile",
+        params: { memNum: this.memNum },
+      });
     },
     goCollection() {
       this.$router.push({ name: "CollectPost" });
     },
+    async getProfileInfo() {
+      try {
+        await this.getProfile(this.memNum);
+        this.profileInfo = this.profile.data;
+        if (this.profileInfo.memIdentify === 1) {
+          this.profileItem[0].content = this.profileInfo.memCompany;
+          this.profileItem[1].content = this.profileInfo.memService
+            .split(",")
+            .map((item) => item)
+            .join(" / ");
+          this.profileItem[2].content = this.profileInfo.memPhone;
+          this.profileItem[3].content = this.profileInfo.memLineID;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getPostsInfo() {
+      try {
+        await this.getPosts();
+        const data = this.posts.filter((item) => {
+          return item.memNum === this.memNum;
+        });
+        this.postsData = data;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    ...mapActions({
+      getPosts: "post/getPosts",
+      getProfile: "member/getProfile",
+    }),
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
+    }),
+  },
+  async mounted() {
+    if (this.memNum) {
+      // 取得個人資料
+      this.getProfileInfo();
+      // 取得貼文
+      this.getPostsInfo();
+    }
   },
 };
 </script>

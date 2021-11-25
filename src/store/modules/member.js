@@ -3,6 +3,7 @@ const state = () => ({
 });
 
 const actions = {
+  // 取得個人資料
   async getProfile({ commit }, memNum) {
     try {
       commit("setLoadingStatus", null, { root: true });

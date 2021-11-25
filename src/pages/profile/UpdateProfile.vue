@@ -39,12 +39,15 @@
                 v-model="profileInfo.memName"
               />
               <v-radio-group
+                class="pa-0"
                 dense
                 row
                 disabled
                 v-model="profileInfo.memIdentify"
               >
-                <span style="font-size: 14px">身份&emsp;&emsp;</span>
+                <span style="font-size: 14px"
+                  >身份&emsp;&emsp;&emsp;&emsp;</span
+                >
                 <v-radio label="保戶" :value="0" />
                 <v-radio label="業務員" :value="1" />
               </v-radio-group>
@@ -57,23 +60,21 @@
                 dense
                 filled
                 rounded
+                v-model="profileInfo.memIntro"
               />
             </v-col>
           </v-row>
           <v-row no-gutters align="center" justify="center">
             <v-col cols="12" md="5">
-              <v-text-field label="帳號" dense filled rounded />
-            </v-col>
-            <v-col cols="12" md="5" offset-md="1">
-              <v-text-field label="密碼" dense filled rounded />
-            </v-col>
-          </v-row>
-          <v-row no-gutters align="center" justify="center">
-            <v-col cols="12" md="5">
-              <v-radio-group dense row>
+              <v-radio-group
+                class="ma-0"
+                dense
+                row
+                v-model="profileInfo.memGender"
+              >
                 <span style="font-size: 14px">生理性別&emsp;&emsp;</span>
-                <v-radio label="男性" value="0" />
-                <v-radio label="女性" value="1" />
+                <v-radio label="男性" :value="0" />
+                <v-radio label="女性" :value="1" />
               </v-radio-group>
             </v-col>
             <v-col cols="12" md="5" offset-md="1">
@@ -81,7 +82,7 @@
                 ref="menu"
                 v-model="menu"
                 :close-on-content-click="false"
-                :return-value.sync="memBirth"
+                :return-value.sync="profileInfo.memBirth"
                 transition="scale-transition"
                 offset-y
                 min-width="auto"
@@ -96,45 +97,101 @@
                     clearable
                     v-bind="attrs"
                     v-on="on"
-                    v-model="memBirth"
+                    v-model="profileInfo.memBirth"
                   />
                 </template>
-                <v-date-picker v-model="memBirth" no-title scrollable>
+                <v-date-picker
+                  v-model="profileInfo.memBirth"
+                  no-title
+                  scrollable
+                >
                   <v-spacer />
                   <v-btn text @click="menu = false">取消</v-btn>
-                  <v-btn text @click="$refs.menu.save(memBirth)">確定</v-btn>
+                  <v-btn text @click="$refs.menu.save(profileInfo.memBirth)"
+                    >確定</v-btn
+                  >
                 </v-date-picker>
               </v-menu>
             </v-col>
           </v-row>
-          <v-row no-gutters align="center" justify="center">
+          <v-row
+            no-gutters
+            align="center"
+            justify="center"
+            v-if="profileInfo.memIdentify === 1"
+          >
             <v-col cols="12" md="5">
-              <v-select label="所屬公司" dense filled rounded :items="items" />
+              <v-autocomplete
+                label="所屬公司"
+                dense
+                filled
+                rounded
+                :items="company"
+                v-model="profileInfo.memCompany"
+              />
             </v-col>
             <v-col cols="12" md="5" offset-md="1">
-              <v-text-field label="公司電話" dense filled rounded />
+              <v-text-field
+                label="公司電話"
+                dense
+                filled
+                rounded
+                v-model="profileInfo.companyContact"
+              />
             </v-col>
           </v-row>
-          <v-row no-gutters align="center" justify="center">
+          <v-row
+            no-gutters
+            align="center"
+            justify="center"
+            v-if="profileInfo.memIdentify === 1"
+          >
             <v-col cols="12" md="2">
               <span style="font-size: 14px">可提供服務</span>
             </v-col>
-            <v-col cols="12" md="1">
-              <v-checkbox label="壽險" value="1" />
-            </v-col>
-            <v-col cols="12" md="1">
-              <v-checkbox label="產險" value="1" />
-            </v-col>
-            <v-col cols="12" md="7">
-              <v-checkbox label="其他" value="1" />
+            <v-col class="d-flex" cols="12" md="9">
+              <v-checkbox
+                label="壽險"
+                value="壽險"
+                v-model="profileInfo.memService"
+              />
+              <v-checkbox
+                label="產險"
+                class="ml-2"
+                value="產險"
+                v-model="profileInfo.memService"
+              />
+              <v-checkbox
+                label="其他"
+                class="ml-2"
+                value="其他"
+                v-model="profileInfo.memService"
+              />
             </v-col>
           </v-row>
-          <v-row no-gutters align="center" justify="center">
+          <v-row
+            no-gutters
+            align="center"
+            justify="center"
+            v-if="profileInfo.memIdentify === 1"
+          >
             <v-col cols="12" md="5">
-              <v-text-field label="聯絡電話" dense filled rounded />
+              <v-text-field
+                label="聯絡電話"
+                dense
+                filled
+                rounded
+                v-model="profileInfo.memPhone"
+              />
             </v-col>
             <v-col cols="12" md="5" offset-md="1">
-              <v-text-field label="Line ID" dense filled rounded />
+              <v-text-field
+                label="Line ID"
+                dense
+                filled
+                rounded
+                v-model="profileInfo.memLineID"
+              />
             </v-col>
           </v-row>
         </v-form>
@@ -142,7 +199,9 @@
           <v-btn class="mr-10" color="grey" outlined @click="goBack()"
             >返回</v-btn
           >
-          <v-btn color="blue darken-2" dark depressed>儲存</v-btn>
+          <v-btn color="blue darken-2" dark depressed @click="updateProfile()"
+            >儲存</v-btn
+          >
         </v-row>
       </v-card-text>
     </v-card>
@@ -154,6 +213,7 @@
 <script>
 import Header from "@/components/Header.vue";
 import Loading from "@/components/Loading.vue";
+import company from "@/assets/constant/company.js";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -165,18 +225,51 @@ export default {
   data() {
     return {
       memNum: parseInt(this.$route.params.memNum),
-      items: [1, 2, 3, 4, 5],
       menu: false,
-      memBirth: null,
+      company,
       profileInfo: {},
     };
   },
   computed: {
     ...mapState({
+      popupStatus: (state) => state.popupStatus,
       profile: (state) => state.member.profile,
     }),
   },
   methods: {
+    async updateProfile() {
+      try {
+        const res = await this.$api.member.updateProfile(this.memNum, {
+          memName: this.profileInfo.memName,
+          memIntro: this.profileInfo.memIntro,
+          memGender: this.profileInfo.memGender,
+          memBirth: this.profileInfo.memBirth,
+          memCompany: this.profileInfo.memCompany,
+          companyContact: this.profileInfo.companyContact
+            ? this.profileInfo.companyContact
+            : null,
+          memService: this.profileInfo.memService
+            ? this.profileInfo.memService.map((item) => item).join(",")
+            : null,
+          memPhone: this.profileInfo.memPhone
+            ? this.profileInfo.memPhone
+            : null,
+          memLineID: this.profileInfo.memLineID
+            ? this.profileInfo.memLineID
+            : null,
+        });
+        if (res.message === "個人資料編輯成功") {
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "green", popupMsg: "個人資料編輯成功" },
+            { root: true }
+          );
+          this.$router.back(-1);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
     goBack() {
       this.$router.back(-1);
     },
@@ -186,6 +279,8 @@ export default {
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
       setLoadingMsg: "setLoadingMsg",
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
     }),
   },
   async mounted() {
@@ -193,6 +288,12 @@ export default {
       try {
         await this.getProfile(this.memNum);
         this.profileInfo = this.profile.data;
+        this.profileInfo.memBirth = this.$moment(
+          this.profileInfo.memBirth
+        ).format("YYYY-MM-DD");
+        if (this.profileInfo.memIdentify === 1) {
+          this.profileInfo.memService = this.profileInfo.memService.split(",");
+        }
       } catch (err) {
         console.log(err);
       }

@@ -57,8 +57,10 @@
             offset-x="10"
             offset-y="10"
           >
-            <v-btn icon>
-              <v-icon color="red">mdi-heart-outline</v-icon>
+            <v-btn icon @click="onLike(post.postNum, post.isLike)">
+              <v-icon color="red">{{
+                post.isLike ? "mdi-heart" : "mdi-heart-outline"
+              }}</v-icon>
             </v-btn>
           </v-badge>
           <v-btn icon>
@@ -123,7 +125,7 @@ export default {
         { title: "刪除", action: (postNum) => this.deletePost(postNum) },
       ],
 
-      postsData: {},
+      postsData: [],
     };
   },
   computed: {
@@ -162,16 +164,67 @@ export default {
         console.log(err);
       }
     },
+    async onLike(postNum, isLike) {
+      if (isLike) {
+        try {
+          const res = await this.$api.post.cancelLikePost(postNum, this.memNum);
+          if (res.message === "成功取消貼文按讚") {
+            this.postsData.map((item) => {
+              if (item.postNum === postNum) {
+                item.isLike = false;
+                item.likeNumber -= 1;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.post.likePost(postNum, {
+            memNum: this.memNum,
+          });
+          if (res.message === "成功為貼文按讚") {
+            this.postsData.map((item) => {
+              if (item.postNum === postNum) {
+                item.isLike = true;
+                item.likeNumber += 1;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
     async getPostsInfo() {
       try {
         const res = await this.getPosts();
         this.postsData = res;
+        this.postsData.map((item) => {
+          this.checkLikePost(item);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async checkLikePost(post) {
+      try {
+        const res = await this.$api.post.checkLikePost(
+          post.postNum,
+          this.memNum
+        );
+        if (res.message === "已按讚") {
+          post.isLike = true;
+        }
       } catch (err) {
         console.log(err);
       }
     },
     ...mapActions({
       getPosts: "post/getPosts",
+      // likePost: "post/likePost",
+      cancelLikePost: "post/cancelLikePost",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
@@ -180,7 +233,7 @@ export default {
       setPopupDetails: "setPopupDetails",
     }),
   },
-  mounted() {
+  async mounted() {
     this.getPostsInfo();
   },
 };

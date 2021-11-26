@@ -10,6 +10,15 @@ const post = {
     apiRequest.put(`/posts/update/${postNum}`, reqBody),
   // 刪除文章
   deletePost: (postNum) => apiRequest.delete(`/posts/delete/${postNum}`),
+  // 文章按讚
+  likePost: (postNum, reqBody) =>
+    apiRequest.post(`/posts/liked/${postNum}`, reqBody),
+  // 取消文章按讚
+  cancelLikePost: (postNum, memNum) =>
+    apiRequest.delete(`/posts/liked/${postNum}/${memNum}`),
+  // 檢查用戶是否按讚
+  checkLikePost: (postNum, memNum) =>
+    apiRequest.get(`/posts/liked/${postNum}/${memNum}`),
 };
 
 export default post;

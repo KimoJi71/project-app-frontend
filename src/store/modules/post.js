@@ -1,5 +1,5 @@
 const state = () => ({
-  posts: {},
+  posts: [],
 });
 
 const actions = {
@@ -10,6 +10,9 @@ const actions = {
       commit("setLoadingMsg", "Loading...", { root: true });
 
       const posts = await this._vm.$api.post.getPosts();
+      posts.map((item) => {
+        item.isLike = false;
+      });
       commit("setPosts", posts);
       commit("setLoadingStatus", null, { root: true });
       commit("setLoadingMsg", "", { root: true });

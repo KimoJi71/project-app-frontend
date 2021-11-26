@@ -32,8 +32,10 @@
             offset-x="10"
             offset-y="10"
           >
-            <v-btn icon>
-              <v-icon color="red">mdi-heart-outline</v-icon>
+            <v-btn icon @click="onLike()">
+              <v-icon color="red">{{
+                postData.isLike ? "mdi-heart" : "mdi-heart-outline"
+              }}</v-icon>
             </v-btn>
           </v-badge>
           <v-btn icon>
@@ -179,6 +181,7 @@ export default {
         memPhoto: null,
         likeNumber: 0,
         commentNumber: 0,
+        isLike: false,
       },
       comments: {},
     };
@@ -257,6 +260,48 @@ export default {
         console.log(err);
       }
     },
+    // 文章按讚相關
+    async onLike() {
+      if (this.postData.isLike) {
+        try {
+          const res = await this.$api.post.cancelLikePost(
+            this.postData.postNum,
+            this.memNum
+          );
+          if (res.message === "成功取消貼文按讚") {
+            this.postData.isLike = false;
+            this.postData.likeNumber -= 1;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.post.likePost(this.postData.postNum, {
+            memNum: this.memNum,
+          });
+          if (res.message === "成功為貼文按讚") {
+            this.postData.isLike = true;
+            this.postData.likeNumber += 1;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkLikePost() {
+      try {
+        const res = await this.$api.post.checkLikePost(
+          this.postData.postNum,
+          this.memNum
+        );
+        if (res.message === "已按讚") {
+          this.postData.isLike = true;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
     goBack() {
       this.$router.back(-1);
     },
@@ -267,6 +312,7 @@ export default {
           return item.postNum === this.postData.postNum;
         });
         this.postData = data[0];
+        this.checkLikePost();
       } catch (err) {
         console.log(err);
       }

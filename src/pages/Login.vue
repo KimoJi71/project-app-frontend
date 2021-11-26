@@ -41,7 +41,7 @@
                         v-model="memPassword"
                       />
                     </v-form>
-                    <v-btn color="primary lighten-1" text>忘記密碼？</v-btn>
+                    <!-- <v-btn color="primary lighten-1" text>忘記密碼？</v-btn> -->
                   </v-card-text>
                   <div class="text-center mt-3 mb-6">
                     <v-btn

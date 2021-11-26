@@ -18,13 +18,11 @@
           </v-avatar>
         </v-badge>
       </v-row>
-      <v-row
-        class="mb-4"
-        align="center"
-        justify="center"
-        v-if="profileInfo.memIdentify === 1"
-      >
-        <a class="blue--text">切換帳號</a>
+      <v-row class="mb-4" align="center" justify="center">
+        <v-btn color="blue" text @click="updatePassword">變更密碼</v-btn>
+        <v-btn color="blue" text v-if="profileInfo.memIdentify === 1"
+          >切換帳號</v-btn
+        >
       </v-row>
       <v-divider class="ml-4" />
       <v-card-text>
@@ -206,13 +204,22 @@
       </v-card-text>
     </v-card>
 
+    <Dialog
+      :visible.sync="dialogVisible"
+      v-if="dialogVisible"
+      :memNum="memNum"
+      @closeDialog="onCancel"
+    />
+    <Snackbar />
     <Loading />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
+import Dialog from "@/components/member/Dialog.vue";
 import company from "@/assets/constant/company.js";
 import { mapState, mapActions, mapMutations } from "vuex";
 
@@ -220,10 +227,13 @@ export default {
   name: "UpdateProfile",
   components: {
     Header,
+    Snackbar,
     Loading,
+    Dialog,
   },
   data() {
     return {
+      dialogVisible: false,
       memNum: parseInt(this.$route.params.memNum),
       menu: false,
       company,
@@ -237,6 +247,12 @@ export default {
     }),
   },
   methods: {
+    updatePassword() {
+      this.dialogVisible = true;
+    },
+    onCancel() {
+      this.dialogVisible = false;
+    },
     async updateProfile() {
       try {
         const res = await this.$api.member.updateProfile(this.memNum, {

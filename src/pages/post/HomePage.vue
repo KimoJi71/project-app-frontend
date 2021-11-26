@@ -164,6 +164,7 @@ export default {
         console.log(err);
       }
     },
+    // 文章按讚相關
     async onLike(postNum, isLike) {
       if (isLike) {
         try {
@@ -197,17 +198,6 @@ export default {
         }
       }
     },
-    async getPostsInfo() {
-      try {
-        const res = await this.getPosts();
-        this.postsData = res;
-        this.postsData.map((item) => {
-          this.checkLikePost(item);
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    },
     async checkLikePost(post) {
       try {
         const res = await this.$api.post.checkLikePost(
@@ -217,6 +207,17 @@ export default {
         if (res.message === "已按讚") {
           post.isLike = true;
         }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getPostsInfo() {
+      try {
+        const res = await this.getPosts();
+        this.postsData = res;
+        this.postsData.map((item) => {
+          this.checkLikePost(item);
+        });
       } catch (err) {
         console.log(err);
       }

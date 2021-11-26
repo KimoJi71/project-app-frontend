@@ -3,9 +3,7 @@
     <!-- 提示跳窗，用 vuex 方式 傳遞  -->
     <v-snackbar v-model="popupStatus" :color="popupMsgColor" timeout="3000" top>
       <v-icon small color="white" class="mr-2">{{
-        popupMsgColor === "green"
-          ? "fas fa-check-circle"
-          : "fas fa-times-circle"
+        popupMsgColor === "green" ? "mdi-check-circle" : "mdi-close-circle"
       }}</v-icon>
       <span class="font-weight-bold">{{ popupMsg }}</span>
       <template v-slot:action="{ attrs }">

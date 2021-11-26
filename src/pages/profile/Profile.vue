@@ -184,8 +184,10 @@
                   offset-x="10"
                   offset-y="10"
                 >
-                  <v-btn icon>
-                    <v-icon color="red">mdi-heart-outline</v-icon>
+                  <v-btn icon @click="onLike(post.postNum, post.isLike)">
+                    <v-icon color="red">{{
+                      post.isLike ? "mdi-heart" : "mdi-heart-outline"
+                    }}</v-icon>
                   </v-btn>
                 </v-badge>
                 <v-btn icon>
@@ -246,7 +248,7 @@ export default {
         { icon: "fab fa-line", color: "green", title: "Line ID", content: "" },
       ],
       profileInfo: {},
-      postsData: {},
+      postsData: [],
     };
   },
   computed: {
@@ -284,6 +286,71 @@ export default {
         console.log(err);
       }
     },
+    // 文章按讚相關
+    async onLike(postNum, isLike) {
+      if (isLike) {
+        try {
+          const res = await this.$api.post.cancelLikePost(
+            postNum,
+            parseInt(this.$cookies.get("user_session"))
+          );
+          if (res.message === "成功取消貼文按讚") {
+            this.postsData.map((item) => {
+              if (item.postNum === postNum) {
+                item.isLike = false;
+                item.likeNumber -= 1;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.post.likePost(postNum, {
+            memNum: parseInt(this.$cookies.get("user_session")),
+          });
+          if (res.message === "成功為貼文按讚") {
+            this.postsData.map((item) => {
+              if (item.postNum === postNum) {
+                item.isLike = true;
+                item.likeNumber += 1;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkLikePost(post) {
+      try {
+        const res = await this.$api.post.checkLikePost(
+          post.postNum,
+          parseInt(this.$cookies.get("user_session"))
+        );
+        if (res.message === "已按讚") {
+          post.isLike = true;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getPostsInfo() {
+      try {
+        await this.getPosts();
+        const data = this.posts.filter((item) => {
+          return item.memNum === this.memNum;
+        });
+        this.postsData = data;
+        this.postsData.map((item) => {
+          this.checkLikePost(item);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    // 編輯個人資料
     updateProfile() {
       this.$router.push({
         name: "UpdateProfile",
@@ -306,17 +373,6 @@ export default {
           this.profileItem[2].content = this.profileInfo.memPhone;
           this.profileItem[3].content = this.profileInfo.memLineID;
         }
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async getPostsInfo() {
-      try {
-        await this.getPosts();
-        const data = this.posts.filter((item) => {
-          return item.memNum === this.memNum;
-        });
-        this.postsData = data;
       } catch (err) {
         console.log(err);
       }

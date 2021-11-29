@@ -9,7 +9,7 @@
         <v-list-item-avatar color="grey">
           <v-icon dark>mdi-account</v-icon>
         </v-list-item-avatar>
-        <span>{{ postData.memName }}</span>
+        <span style="font-size: 18px">{{ postData.memName }}</span>
         <v-row class="mx-1 mt-4">
           <v-textarea
             outlined

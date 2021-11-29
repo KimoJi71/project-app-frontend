@@ -155,9 +155,18 @@
       <v-divider class="ml-4" />
 
       <div class="mt-2 ml-2">
-        <v-btn class="mb-2" icon>
-          <v-icon color="red">mdi-heart-outline</v-icon>
-        </v-btn>
+        <v-badge
+          :content="tableData.likeNumber === 0 ? '0' : tableData.likeNumber"
+          color="red"
+          offset-x="10"
+          offset-y="10"
+        >
+          <v-btn class="mb-2" icon @click="onLike()">
+            <v-icon color="red">{{
+              tableData.isLike ? "mdi-heart" : "mdi-heart-outline"
+            }}</v-icon>
+          </v-btn>
+        </v-badge>
         <v-btn class="mb-2" icon>
           <v-icon color="success">mdi-share</v-icon>
         </v-btn>
@@ -187,9 +196,9 @@ export default {
   },
   data() {
     return {
-      proNum: parseInt(this.$route.params.proNum),
+      memNum: parseInt(this.$cookies.get("user_session")),
       tableData: {
-        proNum: null,
+        proNum: parseInt(this.$route.params.proNum),
         proCompany: "",
         proBigItem: "",
         proSmallItem: "",
@@ -202,6 +211,8 @@ export default {
         proDM: "",
         proTerms: "",
         proStatus: "",
+        likeNumber: 0,
+        isLike: false,
       },
     };
   },
@@ -213,6 +224,51 @@ export default {
   methods: {
     goBack() {
       this.$router.back(-1);
+    },
+    // 商品按讚相關
+    async onLike() {
+      if (this.tableData.isLike) {
+        try {
+          const res = await this.$api.product.cancelLikeProduct(
+            this.tableData.proNum,
+            this.memNum
+          );
+          if (res.message === "成功取消商品按讚") {
+            this.tableData.isLike = false;
+            this.tableData.likeNumber -= 1;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.product.likeProduct(
+            this.tableData.proNum,
+            {
+              memNum: this.memNum,
+            }
+          );
+          if (res.message === "成功為商品按讚") {
+            this.tableData.isLike = true;
+            this.tableData.likeNumber += 1;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkLikeProduct() {
+      try {
+        const res = await this.$api.product.checkLikeProduct(
+          this.tableData.proNum,
+          this.memNum
+        );
+        if (res.message === "已按讚") {
+          this.tableData.isLike = true;
+        }
+      } catch (err) {
+        console.log(err);
+      }
     },
     ...mapActions({
       getProductInfo: "product/getProductInfo",
@@ -226,9 +282,10 @@ export default {
     try {
       await this.getProductInfo("");
       const data = this.productInfo.filter((item) => {
-        return item.proNum === this.proNum;
+        return item.proNum === parseInt(this.$route.params.proNum);
       });
       this.tableData = data[0];
+      this.checkLikeProduct();
     } catch (err) {
       console.log(err);
     }

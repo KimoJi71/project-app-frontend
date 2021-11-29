@@ -137,14 +137,14 @@ export default {
         } else {
           this.setPopupStatus(true, { root: true });
           this.setPopupDetails(
-            { popupMsgColor: "red", popupMsg: "密碼錯誤" },
+            { popupMsgColor: "red", popupMsg: "輸入密碼有誤" },
             { root: true }
           );
         }
       } catch (err) {
         this.setPopupStatus(true, { root: true });
         this.setPopupDetails(
-          { popupMsgColor: "red", popupMsg: "密碼錯誤" },
+          { popupMsgColor: "red", popupMsg: "輸入密碼有誤" },
           { root: true }
         );
       }

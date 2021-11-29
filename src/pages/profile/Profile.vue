@@ -84,26 +84,29 @@
 
             <v-divider />
 
-            <v-list>
-              <v-list-item class="pa-0">
-                <v-list-item-content>
-                  <v-row align="center" justify="center">
-                    <v-btn icon>
-                      <v-icon color="red">mdi-heart-outline</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="warning">mdi-alert</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="success">mdi-share</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon color="blue">mdi-bookmark-outline</v-icon>
-                    </v-btn>
-                  </v-row>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
+            <v-row class="mt-4 pb-1" align="center" justify="center">
+              <v-badge
+                :content="profileInfo.likeNum === 0 ? '0' : profileInfo.likeNum"
+                color="red"
+                offset-x="10"
+                offset-y="10"
+              >
+                <v-btn icon @click="onLikeSalesman(profileInfo.isLike)">
+                  <v-icon color="red">{{
+                    profileInfo.isLike ? "mdi-heart" : "mdi-heart-outline"
+                  }}</v-icon>
+                </v-btn>
+              </v-badge>
+              <v-btn icon>
+                <v-icon color="warning">mdi-alert</v-icon>
+              </v-btn>
+              <v-btn icon>
+                <v-icon color="success">mdi-share</v-icon>
+              </v-btn>
+              <v-btn icon>
+                <v-icon color="blue">mdi-bookmark-outline</v-icon>
+              </v-btn>
+            </v-row>
           </div>
         </v-card>
       </v-col>
@@ -184,7 +187,7 @@
                   offset-x="10"
                   offset-y="10"
                 >
-                  <v-btn icon @click="onLike(post.postNum, post.isLike)">
+                  <v-btn icon @click="onLikePost(post.postNum, post.isLike)">
                     <v-icon color="red">{{
                       post.isLike ? "mdi-heart" : "mdi-heart-outline"
                     }}</v-icon>
@@ -233,7 +236,14 @@ export default {
       screenWidth: document.body.clientWidth,
       show: false,
       menuItems: [
-        { title: "編輯", action: (postNum) => this.updatePost(postNum) },
+        {
+          title: "編輯",
+          action: (postNum) =>
+            this.$router.push({
+              name: "UpdatePost",
+              params: { postNum: postNum },
+            }),
+        },
         { title: "刪除", action: (postNum) => this.deletePost(postNum) },
       ],
       profileItem: [
@@ -248,6 +258,7 @@ export default {
         { icon: "fab fa-line", color: "green", title: "Line ID", content: "" },
       ],
       profileInfo: {},
+      // isLike: false,
       postsData: [],
     };
   },
@@ -261,9 +272,6 @@ export default {
   methods: {
     goDetail(postNum) {
       this.$router.push({ name: "PostDetail", params: { postNum: postNum } });
-    },
-    updatePost(postNum) {
-      this.$router.push({ name: "UpdatePost", params: { postNum: postNum } });
     },
     async deletePost(postNum) {
       try {
@@ -287,7 +295,7 @@ export default {
       }
     },
     // 文章按讚相關
-    async onLike(postNum, isLike) {
+    async onLikePost(postNum, isLike) {
       if (isLike) {
         try {
           const res = await this.$api.post.cancelLikePost(
@@ -372,6 +380,49 @@ export default {
             .join(" / ");
           this.profileItem[2].content = this.profileInfo.memPhone;
           this.profileItem[3].content = this.profileInfo.memLineID;
+          this.checkLikeSalesman();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    // 業務員按讚相關
+    async onLikeSalesman(isLike) {
+      if (isLike) {
+        try {
+          const res = await this.$api.member.cancelLikeSalesman(
+            this.memNum,
+            parseInt(this.$cookies.get("user_session"))
+          );
+          if (res.message === "成功取消業務員按讚") {
+            this.profileInfo.isLike = false;
+            this.profileInfo.likeNum -= 1;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.member.likeSalesman(this.memNum, {
+            memNum: parseInt(this.$cookies.get("user_session")),
+          });
+          if (res.message === "成功為業務員按讚") {
+            this.profileInfo.isLike = true;
+            this.profileInfo.likeNum += 1;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkLikeSalesman() {
+      try {
+        const res = await this.$api.member.checkLikeSalesman(
+          this.memNum,
+          parseInt(this.$cookies.get("user_session"))
+        );
+        if (res.message === "已按讚") {
+          this.profileInfo.isLike = true;
         }
       } catch (err) {
         console.log(err);
@@ -388,7 +439,7 @@ export default {
       setPopupDetails: "setPopupDetails",
     }),
   },
-  async mounted() {
+  mounted() {
     if (this.memNum) {
       // 取得個人資料
       this.getProfileInfo();

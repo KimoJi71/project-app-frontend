@@ -2,9 +2,9 @@
   <v-app>
     <v-main>
       <keep-alive>
-        <router-view v-if="$route.meta.keepAlive" />
+        <router-view v-if="$route.meta.keepAlive" :key="$route.path" />
       </keep-alive>
-      <router-view v-if="!$route.meta.keepAlive" />
+      <router-view v-if="!$route.meta.keepAlive" :key="$route.path" />
     </v-main>
   </v-app>
 </template>

@@ -9,7 +9,7 @@
         <v-list-item-avatar color="grey">
           <v-icon dark>mdi-account</v-icon>
         </v-list-item-avatar>
-        <span>abcxxxxx</span>
+        <span style="font-size: 18px">{{ memName }}</span>
         <v-row class="mx-1 mt-4">
           <v-textarea
             label="請撰寫敘述......"
@@ -34,7 +34,7 @@
 
 <script>
 import Header from "@/components/Header.vue";
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
   name: "CreatePost",
@@ -44,11 +44,13 @@ export default {
   data() {
     return {
       postContent: "",
+      memName: "",
     };
   },
   computed: {
     ...mapState({
       popupStatus: (state) => state.popupStatus,
+      profile: (state) => state.member.profile,
     }),
   },
   methods: {
@@ -73,10 +75,21 @@ export default {
     goBack() {
       this.$router.push({ name: "HomePage" });
     },
+    ...mapActions({
+      getProfile: "member/getProfile",
+    }),
     ...mapMutations({
       setPopupStatus: "setPopupStatus",
       setPopupDetails: "setPopupDetails",
     }),
+  },
+  async mounted() {
+    try {
+      await this.getProfile(this.$cookies.get("user_session"));
+      this.memName = this.profile.data.memName;
+    } catch (err) {
+      console.log(err);
+    }
   },
 };
 </script>

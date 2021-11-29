@@ -10,12 +10,42 @@
             <v-list-item-avatar color="grey">
               <v-icon dark>mdi-account</v-icon>
             </v-list-item-avatar>
-            <span
-              >{{ postData.memName }} ·
+            <router-link
+              class="indigo--text"
+              :to="`/profile/${postData.memNum}`"
+            >
+              {{ postData.memName }}
+            </router-link>
+            <span>
+              ·
               {{
                 $moment(postData.postCreateAt).format("YYYY/MM/DD HH:mm:ss")
               }}</span
             >
+            <v-menu offset-x rounded="lg" v-if="postData.memNum === memNum">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="grey"
+                  icon
+                  right
+                  absolute
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="(item, idx) in postMenuItems"
+                  :key="idx"
+                  @click="item.action(postData.postNum)"
+                >
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
             <div class="black--text mt-2">
               <!--  eslint-disable-next-line prettier/prettier -->
               <span style="white-space: pre-wrap">{{ postData.postContent }}</span>
@@ -81,8 +111,13 @@
               <v-list-item-avatar color="grey">
                 <v-icon dark>mdi-account</v-icon>
               </v-list-item-avatar>
-              <span
-                >{{ comment.memName }} ·
+              <router-link
+                class="indigo--text"
+                :to="`/profile/${comment.memNum}`"
+                >{{ comment.memName }}</router-link
+              >
+              <span>
+                ·
                 {{
                   $moment(comment.commentCreateAt).format("YYYY/MM/DD HH:mm:ss")
                 }}</span
@@ -103,7 +138,7 @@
                 </template>
                 <v-list>
                   <v-list-item
-                    v-for="(item, idx) in menuItems"
+                    v-for="(item, idx) in commentMenuItems"
                     :key="idx"
                     @click="item.action(comment.commentNum)"
                   >
@@ -158,7 +193,18 @@ export default {
   },
   data() {
     return {
-      menuItems: [
+      postMenuItems: [
+        {
+          title: "編輯",
+          action: (postNum) =>
+            this.$router.push({
+              name: "UpdatePost",
+              params: { postNum: postNum },
+            }),
+        },
+        { title: "刪除", action: (postNum) => this.deletePost(postNum) },
+      ],
+      commentMenuItems: [
         {
           title: "編輯",
           action: () => (this.isEdit = true),
@@ -193,6 +239,21 @@ export default {
     }),
   },
   methods: {
+    async deletePost(postNum) {
+      try {
+        const res = await this.$api.post.deletePost(postNum);
+        if (res.message === "文章刪除成功") {
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "green", popupMsg: "文章刪除成功" },
+            { root: true }
+          );
+          this.$router.back(-1);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
     async createComment(postNum) {
       try {
         this.setLoadingStatus(null, { root: true });

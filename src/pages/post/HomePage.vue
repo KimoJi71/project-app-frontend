@@ -13,9 +13,11 @@
         <v-list-item-avatar color="grey">
           <v-icon dark>mdi-account</v-icon>
         </v-list-item-avatar>
-        <span
-          >{{ post.memName }} ·
-          {{ $moment(post.postCreateAt).format("YYYY/MM/DD HH:mm:ss") }}</span
+        <router-link class="indigo--text" :to="`/profile/${post.memNum}`">{{
+          post.memName
+        }}</router-link>
+        <span>
+          · {{ $moment(post.postCreateAt).format("YYYY/MM/DD HH:mm:ss") }}</span
         >
         <v-menu offset-x rounded="lg" v-if="post.memNum === memNum">
           <template v-slot:activator="{ on, attrs }">

@@ -10,6 +10,7 @@ const actions = {
       commit("setLoadingMsg", "Loading...", { root: true });
 
       const profile = await this._vm.$api.member.getProfile(memNum);
+      profile.data.isLike = false;
       commit("setProfile", profile);
       commit("setLoadingStatus", null, { root: true });
       commit("setLoadingMsg", "", { root: true });

@@ -18,6 +18,9 @@ const member = {
   // 檢查用戶是否按讚
   checkLikeSalesman: (salesmanNum, memNum) =>
     apiRequest.get(`/members/liked/${salesmanNum}/${memNum}`),
+  // 檢舉業務員
+  reportSalesman: (salesmanNum, reqBody) =>
+    apiRequest.post(`/members/report/${salesmanNum}`, reqBody),
 };
 
 export default member;

@@ -19,6 +19,9 @@ const post = {
   // 檢查用戶是否按讚
   checkLikePost: (postNum, memNum) =>
     apiRequest.get(`/posts/liked/${postNum}/${memNum}`),
+  // 檢舉文章
+  reportPost: (postNum, reqBody) =>
+    apiRequest.post(`/posts/report/${postNum}`, reqBody),
 };
 
 export default post;

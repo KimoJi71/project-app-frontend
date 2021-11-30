@@ -4,6 +4,7 @@ import Vuex from "vuex";
 import post from "./modules/post";
 import product from "./modules/product";
 import member from "./modules/member";
+import collection from "./modules/collection";
 
 Vue.use(Vuex);
 
@@ -34,5 +35,6 @@ export default new Vuex.Store({
     post,
     product,
     member,
+    collection,
   },
 });

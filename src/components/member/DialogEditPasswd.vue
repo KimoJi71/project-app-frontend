@@ -70,7 +70,7 @@
             color="primary lighten-1"
             depressed
             :disabled="!valid"
-            @click="updatePassword()"
+            @click="updatePassword"
             >送出</v-btn
           >
         </div>

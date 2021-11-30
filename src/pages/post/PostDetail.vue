@@ -68,7 +68,7 @@
               }}</v-icon>
             </v-btn>
           </v-badge>
-          <v-btn icon>
+          <v-btn icon @click="report(postData.postNum)">
             <v-icon color="warning">mdi-alert</v-icon>
           </v-btn>
           <v-btn icon>
@@ -170,6 +170,13 @@
       </v-card-text>
     </v-card>
 
+    <DialogReport
+      :visible.sync="dialogVisible"
+      v-if="dialogVisible"
+      :title="'檢舉文章'"
+      :num="postNum"
+      @closeDialog="onCancel"
+    />
     <Snackbar />
     <BackBtn />
     <Loading />
@@ -181,6 +188,7 @@ import Header from "@/components/Header.vue";
 import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
 import BackBtn from "@/components/BackBtn.vue";
+import DialogReport from "@/components/DialogReport.vue";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -190,9 +198,12 @@ export default {
     Snackbar,
     Loading,
     BackBtn,
+    DialogReport,
   },
   data() {
     return {
+      dialogVisible: false,
+      postNum: null,
       postMenuItems: [
         {
           title: "編輯",
@@ -239,6 +250,14 @@ export default {
     }),
   },
   methods: {
+    report(postNum) {
+      this.dialogVisible = true;
+      this.postNum = postNum;
+    },
+    onCancel() {
+      this.dialogVisible = false;
+      this.postNum = null;
+    },
     async deletePost(postNum) {
       try {
         const res = await this.$api.post.deletePost(postNum);

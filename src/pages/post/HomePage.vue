@@ -1,5 +1,5 @@
 <template>
-  <div id="bkg">
+  <div id="bkg" class="mb-10">
     <Header />
     <br /><br /><br />
     <v-card
@@ -65,7 +65,7 @@
               }}</v-icon>
             </v-btn>
           </v-badge>
-          <v-btn icon>
+          <v-btn icon @click="report(post.postNum)">
             <v-icon color="warning">mdi-alert</v-icon>
           </v-btn>
           <v-btn icon>
@@ -101,6 +101,13 @@
       <span>新增貼文</span>
     </v-tooltip>
 
+    <DialogReport
+      :visible.sync="dialogVisible"
+      v-if="dialogVisible"
+      :title="'檢舉文章'"
+      :num="postNum"
+      @closeDialog="onCancel"
+    />
     <Loading />
     <Snackbar />
   </div>
@@ -110,6 +117,7 @@
 import Header from "@/components/Header.vue";
 import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
+import DialogReport from "@/components/DialogReport.vue";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -118,9 +126,12 @@ export default {
     Header,
     Snackbar,
     Loading,
+    DialogReport,
   },
   data() {
     return {
+      dialogVisible: false,
+      postNum: null,
       memNum: parseInt(this.$cookies.get("user_session")),
       menuItems: [
         { title: "編輯", action: (postNum) => this.updatePost(postNum) },
@@ -136,6 +147,14 @@ export default {
     }),
   },
   methods: {
+    report(postNum) {
+      this.dialogVisible = true;
+      this.postNum = postNum;
+    },
+    onCancel() {
+      this.dialogVisible = false;
+      this.postNum = null;
+    },
     goDetail(postNum) {
       this.$router.push({ name: "PostDetail", params: { postNum: postNum } });
     },

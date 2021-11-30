@@ -19,7 +19,7 @@
       class="mx-auto my-6"
       max-width="80%"
       elevation="3"
-      v-for="product in products"
+      v-for="product in productData"
       :key="product.proNum"
     >
       <v-card-title>
@@ -65,7 +65,7 @@
 
       <v-divider class="mt-2 ml-4" />
 
-      <div class="mt-2 ml-2">
+      <div class="mt-3 ml-4">
         <v-badge
           :content="product.likeNumber === 0 ? '0' : product.likeNumber"
           color="red"
@@ -101,7 +101,7 @@ import Header from "@/components/Header.vue";
 import CollectBtn from "@/components/collection/CollectBtn.vue";
 import BackBtn from "@/components/BackBtn.vue";
 import Loading from "@/components/Loading.vue";
-import { mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "CollectProduct",
@@ -116,8 +116,13 @@ export default {
       isData: false,
       screenWidth: document.body.clientWidth,
       memNum: parseInt(this.$cookies.get("user_session")),
-      products: [],
+      productData: [],
     };
+  },
+  computed: {
+    ...mapState({
+      products: (state) => state.collection.products,
+    }),
   },
   methods: {
     getDetail(proNum) {
@@ -132,7 +137,7 @@ export default {
             this.memNum
           );
           if (res.message === "成功取消商品按讚") {
-            this.products.map((item) => {
+            this.productData.map((item) => {
               if (item.proNum === proNum) {
                 item.isLike = false;
                 item.likeNumber -= 1;
@@ -148,7 +153,7 @@ export default {
             memNum: this.memNum,
           });
           if (res.message === "成功為商品按讚") {
-            this.products.map((item) => {
+            this.productData.map((item) => {
               if (item.proNum === proNum) {
                 item.isLike = true;
                 item.likeNumber += 1;
@@ -173,6 +178,9 @@ export default {
         console.log(err);
       }
     },
+    ...mapActions({
+      getCollectProduct: "collection/getCollectProduct",
+    }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
       setLoadingMsg: "setLoadingMsg",
@@ -180,17 +188,14 @@ export default {
   },
   async mounted() {
     try {
-      const res = await this.$api.collection.getCollectProduct(this.memNum);
-      this.products = res;
-      if (this.products.length === 0) this.isData = true;
-      // else {
-      //   this.products.map((item) => {
-      //     item.isLike = false;
-      //   });
-      //   this.products.map((item) => {
-      //     this.checkLikeProduct(item);
-      //   });
-      // }
+      await this.getCollectProduct(this.memNum);
+      this.productData = this.products;
+      if (this.productData.length === 0) this.isData = true;
+      else {
+        this.productData.map((item) => {
+          this.checkLikeProduct(item);
+        });
+      }
     } catch (err) {
       console.log(err);
     }

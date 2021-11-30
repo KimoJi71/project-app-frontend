@@ -19,7 +19,7 @@
       class="mx-auto my-6"
       max-width="80%"
       elevation="3"
-      v-for="post in posts"
+      v-for="post in postData"
       :key="post.postNum"
     >
       <v-card-text>
@@ -50,10 +50,19 @@
         </div>
         <v-divider class="mt-4" />
         <div class="mt-3">
-          <v-btn icon>
-            <v-icon color="red">mdi-heart-outline</v-icon>
-          </v-btn>
-          <v-btn icon>
+          <v-badge
+            :content="post.likeNumber === 0 ? '0' : post.likeNumber"
+            color="red"
+            offset-x="10"
+            offset-y="10"
+          >
+            <v-btn icon @click="onLike(post.postNum, post.isLike)">
+              <v-icon color="red">{{
+                post.isLike ? "mdi-heart" : "mdi-heart-outline"
+              }}</v-icon>
+            </v-btn>
+          </v-badge>
+          <v-btn icon @click="report(post.postNum)">
             <v-icon color="warning">mdi-alert</v-icon>
           </v-btn>
           <v-btn icon>
@@ -69,6 +78,13 @@
       </v-card-text>
     </v-card>
 
+    <DialogReport
+      :visible.sync="dialogVisible"
+      v-if="dialogVisible"
+      :title="'檢舉文章'"
+      :num="postNum"
+      @closeDialog="onCancel"
+    />
     <BackBtn />
     <Loading />
     <Snackbar />
@@ -81,7 +97,8 @@ import CollectBtn from "@/components/collection/CollectBtn.vue";
 import BackBtn from "@/components/BackBtn.vue";
 import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
-import { mapState, mapMutations } from "vuex";
+import DialogReport from "@/components/DialogReport.vue";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "CollectPost",
@@ -91,23 +108,85 @@ export default {
     BackBtn,
     Snackbar,
     Loading,
+    DialogReport,
   },
   data() {
     return {
       isData: false,
+      dialogVisible: false,
+      postNum: null,
       memNum: parseInt(this.$cookies.get("user_session")),
-      posts: [],
+      postData: [],
     };
   },
   computed: {
     ...mapState({
       popupStatus: (state) => state.popupStatus,
+      posts: (state) => state.collection.posts,
     }),
   },
   methods: {
+    report(postNum) {
+      this.dialogVisible = true;
+      this.postNum = postNum;
+    },
+    onCancel() {
+      this.dialogVisible = false;
+      this.postNum = null;
+    },
     goDetail(postNum) {
       this.$router.push({ name: "PostDetail", params: { postNum: postNum } });
     },
+    // 文章按讚相關
+    async onLike(postNum, isLike) {
+      if (isLike) {
+        try {
+          const res = await this.$api.post.cancelLikePost(postNum, this.memNum);
+          if (res.message === "成功取消貼文按讚") {
+            this.postData.map((item) => {
+              if (item.postNum === postNum) {
+                item.isLike = false;
+                item.likeNumber -= 1;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.post.likePost(postNum, {
+            memNum: this.memNum,
+          });
+          if (res.message === "成功為貼文按讚") {
+            this.postData.map((item) => {
+              if (item.postNum === postNum) {
+                item.isLike = true;
+                item.likeNumber += 1;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkLikePost(post) {
+      try {
+        const res = await this.$api.post.checkLikePost(
+          post.postNum,
+          this.memNum
+        );
+        if (res.message === "已按讚") {
+          post.isLike = true;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    ...mapActions({
+      getCollectPost: "collection/getCollectPost",
+    }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
       setLoadingMsg: "setLoadingMsg",
@@ -117,9 +196,14 @@ export default {
   },
   async mounted() {
     try {
-      const res = await this.$api.collection.getCollectPost(this.memNum);
-      this.posts = res;
-      if (this.posts.length === 0) this.isData = true;
+      await this.getCollectPost(this.memNum);
+      this.postData = this.posts;
+      if (this.postData.length === 0) this.isData = true;
+      else {
+        this.postData.map((item) => {
+          this.checkLikePost(item);
+        });
+      }
     } catch (err) {
       console.log(err);
     }

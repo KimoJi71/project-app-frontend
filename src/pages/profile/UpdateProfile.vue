@@ -204,7 +204,7 @@
       </v-card-text>
     </v-card>
 
-    <Dialog
+    <DialogEditPasswd
       :visible.sync="dialogVisible"
       v-if="dialogVisible"
       :memNum="memNum"
@@ -219,7 +219,7 @@
 import Header from "@/components/Header.vue";
 import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
-import Dialog from "@/components/member/Dialog.vue";
+import DialogEditPasswd from "@/components/member/DialogEditPasswd.vue";
 import company from "@/assets/constant/company.js";
 import { mapState, mapActions, mapMutations } from "vuex";
 
@@ -229,7 +229,7 @@ export default {
     Header,
     Snackbar,
     Loading,
-    Dialog,
+    DialogEditPasswd,
   },
   data() {
     return {

@@ -84,7 +84,12 @@
 
             <v-divider />
 
-            <v-row class="mt-4 pb-1" align="center" justify="center">
+            <v-row
+              class="mt-4 pb-1"
+              align="center"
+              justify="center"
+              v-if="memNum !== parseInt($cookies.get('user_session'))"
+            >
               <v-badge
                 :content="profileInfo.likeNum === 0 ? '0' : profileInfo.likeNum"
                 color="red"
@@ -97,7 +102,7 @@
                   }}</v-icon>
                 </v-btn>
               </v-badge>
-              <v-btn icon>
+              <v-btn icon @click="reportSalesman(profileInfo.memNum)">
                 <v-icon color="warning">mdi-alert</v-icon>
               </v-btn>
               <v-btn icon>
@@ -193,7 +198,7 @@
                     }}</v-icon>
                   </v-btn>
                 </v-badge>
-                <v-btn icon>
+                <v-btn icon @click="reportPost(post.postNum)">
                   <v-icon color="warning">mdi-alert</v-icon>
                 </v-btn>
                 <v-btn icon>
@@ -212,6 +217,13 @@
       </v-col>
     </v-row>
 
+    <DialogReport
+      :visible.sync="dialogVisible"
+      v-if="dialogVisible"
+      :title="dialogTitle"
+      :num="num"
+      @closeDialog="onCancel"
+    />
     <Loading />
     <Snackbar />
   </div>
@@ -221,6 +233,7 @@
 import Header from "@/components/Header.vue";
 import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
+import DialogReport from "@/components/DialogReport.vue";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -229,9 +242,13 @@ export default {
     Header,
     Snackbar,
     Loading,
+    DialogReport,
   },
   data() {
     return {
+      dialogVisible: false,
+      dialogTitle: "",
+      num: null,
       memNum: parseInt(this.$route.params.memNum),
       screenWidth: document.body.clientWidth,
       show: false,
@@ -258,7 +275,6 @@ export default {
         { icon: "fab fa-line", color: "green", title: "Line ID", content: "" },
       ],
       profileInfo: {},
-      // isLike: false,
       postsData: [],
     };
   },
@@ -270,6 +286,20 @@ export default {
     }),
   },
   methods: {
+    reportSalesman(salesmanNum) {
+      this.dialogVisible = true;
+      this.dialogTitle = "檢舉業務員";
+      this.num = salesmanNum;
+    },
+    reportPost(postNum) {
+      this.dialogVisible = true;
+      this.dialogTitle = "檢舉文章";
+      this.num = postNum;
+    },
+    onCancel() {
+      this.dialogVisible = false;
+      this.num = null;
+    },
     goDetail(postNum) {
       this.$router.push({ name: "PostDetail", params: { postNum: postNum } });
     },

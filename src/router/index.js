@@ -100,7 +100,7 @@ const routes = [
     component: () => import("@/pages/collection/CollectPost"),
     meta: {
       title: "收藏",
-      keepAlive: true,
+      keepAlive: false,
     },
   },
   {
@@ -109,7 +109,7 @@ const routes = [
     component: () => import("@/pages/collection/CollectProduct"),
     meta: {
       title: "收藏",
-      keepAlive: true,
+      keepAlive: false,
     },
   },
   {
@@ -118,7 +118,7 @@ const routes = [
     component: () => import("@/pages/collection/CollectSalesman"),
     meta: {
       title: "收藏",
-      keepAlive: true,
+      keepAlive: false,
     },
   },
   {

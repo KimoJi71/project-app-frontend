@@ -14,21 +14,38 @@
     </div>
 
     <!-- 有資料時render -->
-    <v-card class="mx-auto my-6" max-width="80%" elevation="3" v-else>
+    <v-card
+      v-else
+      class="mx-auto my-6"
+      max-width="80%"
+      elevation="3"
+      v-for="post in posts"
+      :key="post.postNum"
+    >
       <v-card-text>
         <v-list-item-avatar color="grey">
           <v-icon dark>mdi-account</v-icon>
         </v-list-item-avatar>
-        <span>abcxxxxx · 5小時前</span>
-        <div class="black--text mt-2">
-          <span>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book
-          </span>
-          <router-link class="text-decoration-underline" to="/posts/detail/1"
-            >...READ MORE</router-link
+        <router-link class="indigo--text" :to="`/profile/${post.memNum}`">{{
+          post.memName
+        }}</router-link>
+        <span>
+          · {{ $moment(post.postCreateAt).format("YYYY/MM/DD HH:mm:ss") }}</span
+        >
+        <div
+          class="black--text mt-2"
+          style="cursor: pointer"
+          @click="goDetail(post.postNum)"
+        >
+          <span style="white-space: pre-wrap">{{
+            post.postContent.length > 50
+              ? post.postContent.slice(0, 50)
+              : post.postContent
+          }}</span>
+          <span
+            class="text-decoration-underline primary--text"
+            v-if="post.postContent.length > 50"
+            >...READ MORE</span
           >
         </div>
         <v-divider class="mt-4" />
@@ -45,11 +62,16 @@
           <v-btn icon>
             <v-icon color="blue">mdi-bookmark</v-icon>
           </v-btn>
-          <span class="mt-2" style="float: right">共 2 則留言</span>
+          <span class="mt-2" style="float: right"
+            >共 {{ post.commentNumber }} 則留言</span
+          >
         </div>
       </v-card-text>
     </v-card>
+
     <BackBtn />
+    <Loading />
+    <Snackbar />
   </div>
 </template>
 
@@ -57,6 +79,9 @@
 import Header from "@/components/Header.vue";
 import CollectBtn from "@/components/collection/CollectBtn.vue";
 import BackBtn from "@/components/BackBtn.vue";
+import Snackbar from "@/components/Snackbar.vue";
+import Loading from "@/components/Loading.vue";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "CollectPost",
@@ -64,11 +89,40 @@ export default {
     Header,
     CollectBtn,
     BackBtn,
+    Snackbar,
+    Loading,
   },
   data() {
     return {
       isData: false,
+      memNum: parseInt(this.$cookies.get("user_session")),
+      posts: [],
     };
+  },
+  computed: {
+    ...mapState({
+      popupStatus: (state) => state.popupStatus,
+    }),
+  },
+  methods: {
+    goDetail(postNum) {
+      this.$router.push({ name: "PostDetail", params: { postNum: postNum } });
+    },
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
+    }),
+  },
+  async mounted() {
+    try {
+      const res = await this.$api.collection.getCollectPost(this.memNum);
+      this.posts = res;
+      if (this.posts.length === 0) this.isData = true;
+    } catch (err) {
+      console.log(err);
+    }
   },
 };
 </script>

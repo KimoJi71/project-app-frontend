@@ -68,7 +68,7 @@
           <v-btn icon>
             <v-icon color="success">mdi-share</v-icon>
           </v-btn>
-          <v-btn icon>
+          <v-btn icon @click="cancelCollect(post.postNum)">
             <v-icon color="blue">mdi-bookmark</v-icon>
           </v-btn>
           <span class="mt-2" style="float: right"
@@ -184,6 +184,39 @@ export default {
         console.log(err);
       }
     },
+    // 文章收藏相關
+    async cancelCollect(postNum) {
+      try {
+        const res = await this.$api.collection.cancelCollectPost(
+          postNum,
+          this.memNum
+        );
+        if (res.message === "成功取消貼文收藏") {
+          this.getCollections();
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "green", popupMsg: "已移除收藏" },
+            { root: true }
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getCollections() {
+      try {
+        await this.getCollectPost(this.memNum);
+        this.postData = this.posts;
+        if (this.postData.length === 0) this.isData = true;
+        else {
+          this.postData.map((item) => {
+            this.checkLikePost(item);
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
     ...mapActions({
       getCollectPost: "collection/getCollectPost",
     }),
@@ -194,19 +227,8 @@ export default {
       setPopupDetails: "setPopupDetails",
     }),
   },
-  async mounted() {
-    try {
-      await this.getCollectPost(this.memNum);
-      this.postData = this.posts;
-      if (this.postData.length === 0) this.isData = true;
-      else {
-        this.postData.map((item) => {
-          this.checkLikePost(item);
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  mounted() {
+    this.getCollections();
   },
 };
 </script>

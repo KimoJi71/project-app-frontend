@@ -204,8 +204,13 @@
                 <v-btn icon>
                   <v-icon color="success">mdi-share</v-icon>
                 </v-btn>
-                <v-btn icon>
-                  <v-icon color="blue">mdi-bookmark-outline</v-icon>
+                <v-btn
+                  icon
+                  @click="onCollectPost(post.postNum, post.isCollect)"
+                >
+                  <v-icon color="blue">{{
+                    post.isCollect ? "mdi-bookmark" : "mdi-bookmark-outline"
+                  }}</v-icon>
                 </v-btn>
                 <span class="mt-2" style="float: right"
                   >共 {{ post.commentNumber }} 則留言</span
@@ -374,6 +379,49 @@ export default {
         console.log(err);
       }
     },
+    // 文章收藏相關
+    async onCollectPost(postNum, isCollect) {
+      if (isCollect) {
+        try {
+          const res = await this.$api.collection.cancelCollectPost(
+            postNum,
+            parseInt(this.$cookies.get("user_session"))
+          );
+          if (res.message === "成功取消貼文收藏") {
+            this.postsData.map((item) => {
+              if (item.postNum === postNum) {
+                item.isCollect = false;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.collection.collectPost(postNum, {
+            memNum: parseInt(this.$cookies.get("user_session")),
+          });
+          if (res.message === "成功收藏了貼文") {
+            this.postsData.map((item) => {
+              if (item.postNum === postNum) {
+                item.isCollect = true;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkCollectPost(post) {
+      const res = await this.getCollectPost(
+        parseInt(this.$cookies.get("user_session"))
+      );
+      res.map((item) => {
+        if (item.postNum === post.postNum) post.isCollect = true;
+      });
+    },
     async getPostsInfo() {
       try {
         await this.getPosts();
@@ -383,6 +431,7 @@ export default {
         this.postsData = data;
         this.postsData.map((item) => {
           this.checkLikePost(item);
+          this.checkCollectPost(item);
         });
       } catch (err) {
         console.log(err);
@@ -461,6 +510,7 @@ export default {
     ...mapActions({
       getPosts: "post/getPosts",
       getProfile: "member/getProfile",
+      getCollectPost: "collection/getCollectPost",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",

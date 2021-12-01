@@ -47,7 +47,7 @@
                 }}</v-icon>
               </v-btn>
             </v-badge>
-            <v-btn icon>
+            <v-btn icon @click="report(salesman.memNum)">
               <v-icon color="warning">mdi-alert</v-icon>
             </v-btn>
             <v-btn icon>
@@ -61,7 +61,16 @@
       </v-col>
     </v-row>
 
+    <DialogReport
+      :visible.sync="dialogVisible"
+      v-if="dialogVisible"
+      :title="'檢舉業務員'"
+      :num="salesmanNum"
+      @closeDialog="onCancel"
+    />
     <BackBtn />
+    <Loading />
+    <Snackbar />
   </div>
 </template>
 
@@ -69,6 +78,9 @@
 import Header from "@/components/Header.vue";
 import CollectBtn from "@/components/collection/CollectBtn.vue";
 import BackBtn from "@/components/BackBtn.vue";
+import Snackbar from "@/components/Snackbar.vue";
+import Loading from "@/components/Loading.vue";
+import DialogReport from "@/components/DialogReport.vue";
 import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
@@ -77,10 +89,15 @@ export default {
     Header,
     CollectBtn,
     BackBtn,
+    Snackbar,
+    Loading,
+    DialogReport,
   },
   data() {
     return {
       isData: false,
+      dialogVisible: false,
+      salesmanNum: null,
       memNum: parseInt(this.$cookies.get("user_session")),
       salesmen: [],
     };
@@ -92,6 +109,14 @@ export default {
     }),
   },
   methods: {
+    report(salesmanNum) {
+      this.dialogVisible = true;
+      this.salesmanNum = salesmanNum;
+    },
+    onCancel() {
+      this.dialogVisible = false;
+      this.salesmanNum = null;
+    },
     // 業務員按讚相關
     async onLike(salesmanNum, isLike) {
       if (isLike) {

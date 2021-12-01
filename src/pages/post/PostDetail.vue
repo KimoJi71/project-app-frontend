@@ -74,8 +74,10 @@
           <v-btn icon>
             <v-icon color="success">mdi-share</v-icon>
           </v-btn>
-          <v-btn icon>
-            <v-icon color="blue">mdi-bookmark-outline</v-icon>
+          <v-btn icon @click="onCollect()">
+            <v-icon color="blue">{{
+              postData.isCollect ? "mdi-bookmark" : "mdi-bookmark-outline"
+            }}</v-icon>
           </v-btn>
           <span class="mt-2" style="float: right"
             >共 {{ postData.commentNumber }} 則留言</span
@@ -239,6 +241,7 @@ export default {
         likeNumber: 0,
         commentNumber: 0,
         isLike: false,
+        isCollect: false,
       },
       comments: {},
     };
@@ -382,6 +385,40 @@ export default {
         console.log(err);
       }
     },
+    // 文章收藏相關
+    async onCollect() {
+      if (this.postData.isCollect) {
+        try {
+          const res = await this.$api.collection.cancelCollectPost(
+            this.postData.postNum,
+            this.memNum
+          );
+          if (res.message === "成功取消貼文收藏")
+            this.postData.isCollect = false;
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.collection.collectPost(
+            this.postData.postNum,
+            {
+              memNum: this.memNum,
+            }
+          );
+          if (res.message === "成功收藏了貼文") this.postData.isCollect = true;
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkCollectPost() {
+      const res = await this.getCollectPost(this.memNum);
+      res.map((item) => {
+        if (item.postNum === this.postData.postNum)
+          this.postData.isCollect = true;
+      });
+    },
     goBack() {
       this.$router.back(-1);
     },
@@ -393,6 +430,7 @@ export default {
         });
         this.postData = data[0];
         this.checkLikePost();
+        this.checkCollectPost();
       } catch (err) {
         console.log(err);
       }
@@ -411,6 +449,7 @@ export default {
     },
     ...mapActions({
       getPosts: "post/getPosts",
+      getCollectPost: "collection/getCollectPost",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",

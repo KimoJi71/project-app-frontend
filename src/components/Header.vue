@@ -15,7 +15,13 @@
       />
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" absolute temporary>
+    <v-navigation-drawer
+      v-model="drawer"
+      left
+      fixed
+      temporary
+      overlay-opacity="0.3"
+    >
       <v-list-item v-if="memNum" link :to="`/profile/${memNum}`">
         <v-list-item-avatar color="grey">
           <v-icon dark>mdi-account</v-icon>

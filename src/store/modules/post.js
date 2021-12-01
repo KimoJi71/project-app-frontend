@@ -12,6 +12,7 @@ const actions = {
       const posts = await this._vm.$api.post.getPosts();
       posts.map((item) => {
         item.isLike = false;
+        item.isCollect = false;
       });
       commit("setPosts", posts);
       commit("setLoadingStatus", null, { root: true });

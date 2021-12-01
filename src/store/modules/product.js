@@ -20,6 +20,7 @@ const actions = {
       const productInfo = await this._vm.$api.product.getProductInfo(params);
       productInfo.map((item) => {
         item.isLike = false;
+        item.isCollect = false;
       });
       commit("setProductInfo", productInfo);
       commit("setLoadingStatus", null, { root: true });

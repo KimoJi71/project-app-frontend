@@ -85,7 +85,7 @@
         <v-btn class="mb-2" icon>
           <v-icon color="success">mdi-share</v-icon>
         </v-btn>
-        <v-btn class="mb-2" icon>
+        <v-btn class="mb-2" icon @click="cancelCollect(product.proNum)">
           <v-icon color="blue">mdi-bookmark</v-icon>
         </v-btn>
       </div>
@@ -93,6 +93,7 @@
 
     <BackBtn />
     <Loading />
+    <Snackbar />
   </div>
 </template>
 
@@ -100,6 +101,7 @@
 import Header from "@/components/Header.vue";
 import CollectBtn from "@/components/collection/CollectBtn.vue";
 import BackBtn from "@/components/BackBtn.vue";
+import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
 import { mapState, mapMutations, mapActions } from "vuex";
 
@@ -109,6 +111,7 @@ export default {
     Header,
     CollectBtn,
     BackBtn,
+    Snackbar,
     Loading,
   },
   data() {
@@ -121,6 +124,7 @@ export default {
   },
   computed: {
     ...mapState({
+      popupStatus: (state) => state.popupStatus,
       products: (state) => state.collection.products,
     }),
   },
@@ -178,27 +182,51 @@ export default {
         console.log(err);
       }
     },
+    // 商品收藏相關
+    async cancelCollect(proNum) {
+      try {
+        const res = await this.$api.collection.cancelCollectProduct(
+          proNum,
+          this.memNum
+        );
+        if (res.message === "成功取消商品收藏") {
+          this.getCollections();
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "green", popupMsg: "已移除收藏" },
+            { root: true }
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getCollections() {
+      try {
+        await this.getCollectProduct(this.memNum);
+        this.productData = this.products;
+        if (this.productData.length === 0) this.isData = true;
+        else {
+          this.productData.map((item) => {
+            this.checkLikeProduct(item);
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
     ...mapActions({
       getCollectProduct: "collection/getCollectProduct",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
       setLoadingMsg: "setLoadingMsg",
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
     }),
   },
-  async mounted() {
-    try {
-      await this.getCollectProduct(this.memNum);
-      this.productData = this.products;
-      if (this.productData.length === 0) this.isData = true;
-      else {
-        this.productData.map((item) => {
-          this.checkLikeProduct(item);
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  mounted() {
+    this.getCollections();
   },
 };
 </script>

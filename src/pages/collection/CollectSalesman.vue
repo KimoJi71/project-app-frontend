@@ -53,7 +53,7 @@
             <v-btn icon>
               <v-icon color="success">mdi-share</v-icon>
             </v-btn>
-            <v-btn icon>
+            <v-btn icon @click="cancelCollect(salesman.memNum)">
               <v-icon color="blue">mdi-bookmark</v-icon>
             </v-btn>
           </div>
@@ -167,27 +167,51 @@ export default {
         console.log(err);
       }
     },
+    // 業務員收藏相關
+    async cancelCollect(salesmanNum) {
+      try {
+        const res = await this.$api.collection.cancelCollectSalesman(
+          salesmanNum,
+          this.memNum
+        );
+        if (res.message === "成功取消業務員收藏") {
+          this.getCollections();
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "green", popupMsg: "已移除收藏" },
+            { root: true }
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getCollections() {
+      try {
+        await this.getCollectSalesman(this.memNum);
+        this.salesmen = this.salesmanData;
+        if (this.salesmen.length === 0) this.isData = true;
+        else {
+          this.salesmen.map((item) => {
+            this.checkLikeSalesman(item);
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
     ...mapActions({
       getCollectSalesman: "collection/getCollectSalesman",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
       setLoadingMsg: "setLoadingMsg",
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
     }),
   },
-  async mounted() {
-    try {
-      await this.getCollectSalesman(this.memNum);
-      this.salesmen = this.salesmanData;
-      if (this.salesmen.length === 0) this.isData = true;
-      else {
-        this.salesmen.map((item) => {
-          this.checkLikeSalesman(item);
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  mounted() {
+    this.getCollections();
   },
 };
 </script>

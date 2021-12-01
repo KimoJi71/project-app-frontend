@@ -156,8 +156,14 @@
                 <v-btn class="mb-2" icon>
                   <v-icon color="success">mdi-share</v-icon>
                 </v-btn>
-                <v-btn class="mb-2" icon>
-                  <v-icon color="blue">mdi-bookmark-outline</v-icon>
+                <v-btn
+                  class="mb-2"
+                  icon
+                  @click="onCollect(data.proNum, data.isCollect)"
+                >
+                  <v-icon color="blue">{{
+                    data.isCollect ? "mdi-bookmark" : "mdi-bookmark-outline"
+                  }}</v-icon>
                 </v-btn>
               </div>
             </v-card>
@@ -216,7 +222,6 @@ export default {
         smallItem: "",
         content: "",
       },
-
       proData: [],
       total: 0,
     };
@@ -286,6 +291,47 @@ export default {
         console.log(err);
       }
     },
+    // 商品收藏相關
+    async onCollect(proNum, isCollect) {
+      if (isCollect) {
+        try {
+          const res = await this.$api.collection.cancelCollectProduct(
+            proNum,
+            this.memNum
+          );
+          if (res.message === "成功取消商品收藏") {
+            this.productInfo.map((item) => {
+              if (item.proNum === proNum) {
+                item.isCollect = false;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.collection.collectProduct(proNum, {
+            memNum: this.memNum,
+          });
+          if (res.message === "成功收藏了商品") {
+            this.productInfo.map((item) => {
+              if (item.proNum === proNum) {
+                item.isCollect = true;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkCollectProduct(product) {
+      const res = await this.getCollectProduct(this.memNum);
+      res.map((item) => {
+        if (item.proNum === product.proNum) product.isCollect = true;
+      });
+    },
     async getProducts(params, from, limit) {
       try {
         await this.getProductInfo(params);
@@ -293,6 +339,7 @@ export default {
         this.proData = this.productInfo.slice(from, limit);
         this.productInfo.map((item) => {
           this.checkLikeProduct(item);
+          this.checkCollectProduct(item);
         });
       } catch (err) {
         console.log(err);
@@ -300,11 +347,16 @@ export default {
     },
     ...mapActions({
       getProductInfo: "product/getProductInfo",
+      getCollectProduct: "collection/getCollectProduct",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
       setLoadingMsg: "setLoadingMsg",
     }),
+  },
+  beforeRouteLeave(to, from, next) {
+    from.meta.keepAlive = false;
+    next();
   },
   mounted() {
     this.getProducts(this.params, 0, 10);

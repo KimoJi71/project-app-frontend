@@ -108,8 +108,12 @@
               <v-btn icon>
                 <v-icon color="success">mdi-share</v-icon>
               </v-btn>
-              <v-btn icon>
-                <v-icon color="blue">mdi-bookmark-outline</v-icon>
+              <v-btn icon @click="onCollectSalesman()">
+                <v-icon color="blue">{{
+                  profileInfo.isCollect
+                    ? "mdi-bookmark"
+                    : "mdi-bookmark-outline"
+                }}</v-icon>
               </v-btn>
             </v-row>
           </div>
@@ -460,6 +464,7 @@ export default {
           this.profileItem[2].content = this.profileInfo.memPhone;
           this.profileItem[3].content = this.profileInfo.memLineID;
           this.checkLikeSalesman();
+          this.checkCollectSalesman();
         }
       } catch (err) {
         console.log(err);
@@ -507,10 +512,50 @@ export default {
         console.log(err);
       }
     },
+    // 業務員收藏相關
+    async onCollectSalesman() {
+      if (this.profileInfo.isCollect) {
+        try {
+          const res = await this.$api.collection.cancelCollectSalesman(
+            this.profileInfo.memNum,
+            parseInt(this.$cookies.get("user_session"))
+          );
+          if (res.message === "成功取消業務員收藏") {
+            this.profileInfo.isCollect = false;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.collection.collectSalesman(
+            this.profileInfo.memNum,
+            {
+              memNum: parseInt(this.$cookies.get("user_session")),
+            }
+          );
+          if (res.message === "成功收藏了業務員") {
+            this.profileInfo.isCollect = true;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkCollectSalesman() {
+      const res = await this.getCollectSalesman(
+        parseInt(this.$cookies.get("user_session"))
+      );
+      res.map((item) => {
+        if (item.memNum === this.profileInfo.memNum)
+          this.profileInfo.isCollect = true;
+      });
+    },
     ...mapActions({
       getPosts: "post/getPosts",
       getProfile: "member/getProfile",
       getCollectPost: "collection/getCollectPost",
+      getCollectSalesman: "collection/getCollectSalesman",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",

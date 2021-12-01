@@ -170,8 +170,10 @@
         <v-btn class="mb-2" icon>
           <v-icon color="success">mdi-share</v-icon>
         </v-btn>
-        <v-btn class="mb-2" icon>
-          <v-icon color="blue">mdi-bookmark-outline</v-icon>
+        <v-btn class="mb-2" icon @click="onCollect()">
+          <v-icon color="blue">{{
+            tableData.isCollect ? "mdi-bookmark" : "mdi-bookmark-outline"
+          }}</v-icon>
         </v-btn>
       </div>
     </v-card>
@@ -213,6 +215,7 @@ export default {
         proStatus: "",
         likeNumber: 0,
         isLike: false,
+        isCollect: false,
       },
     };
   },
@@ -270,13 +273,59 @@ export default {
         console.log(err);
       }
     },
+    // 商品收藏相關
+    async onCollect() {
+      if (this.tableData.isCollect) {
+        try {
+          const res = await this.$api.collection.cancelCollectProduct(
+            this.tableData.proNum,
+            this.memNum
+          );
+          if (res.message === "成功取消商品收藏") {
+            this.tableData.isCollect = false;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.collection.collectProduct(
+            this.tableData.proNum,
+            {
+              memNum: this.memNum,
+            }
+          );
+          if (res.message === "成功收藏了商品") {
+            this.tableData.isCollect = true;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkCollectProduct() {
+      const res = await this.getCollectProduct(this.memNum);
+      res.map((item) => {
+        if (item.proNum === this.tableData.proNum)
+          this.tableData.isCollect = true;
+      });
+    },
     ...mapActions({
       getProductInfo: "product/getProductInfo",
+      getCollectProduct: "collection/getCollectProduct",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
       setLoadingMsg: "setLoadingMsg",
     }),
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.path === "/products") {
+      to.meta.keepAlive = true;
+    } else {
+      to.meta.keepAlive = false;
+    }
+    next();
   },
   async mounted() {
     try {
@@ -286,6 +335,7 @@ export default {
       });
       this.tableData = data[0];
       this.checkLikeProduct();
+      this.checkCollectProduct();
     } catch (err) {
       console.log(err);
     }

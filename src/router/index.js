@@ -23,6 +23,33 @@ const routes = [
     },
   },
   {
+    name: "SearchPost",
+    path: "/search/post",
+    component: () => import("@/pages/search/SearchPost"),
+    meta: {
+      title: "搜尋",
+      keepAlive: false,
+    },
+  },
+  {
+    name: "SearchProduct",
+    path: "/search/product",
+    component: () => import("@/pages/search/SearchProduct"),
+    meta: {
+      title: "搜尋",
+      keepAlive: false,
+    },
+  },
+  {
+    name: "SearchMember",
+    path: "/search/member",
+    component: () => import("@/pages/search/SearchMember"),
+    meta: {
+      title: "搜尋",
+      keepAlive: false,
+    },
+  },
+  {
     name: "HomePage",
     path: "/posts",
     component: () => import("@/pages/post/HomePage"),

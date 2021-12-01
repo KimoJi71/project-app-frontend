@@ -68,7 +68,6 @@
       :num="salesmanNum"
       @closeDialog="onCancel"
     />
-    <BackBtn />
     <Loading />
     <Snackbar />
   </div>
@@ -77,7 +76,6 @@
 <script>
 import Header from "@/components/Header.vue";
 import CollectBtn from "@/components/collection/CollectBtn.vue";
-import BackBtn from "@/components/BackBtn.vue";
 import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
 import DialogReport from "@/components/DialogReport.vue";
@@ -88,7 +86,6 @@ export default {
   components: {
     Header,
     CollectBtn,
-    BackBtn,
     Snackbar,
     Loading,
     DialogReport,

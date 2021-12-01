@@ -1,14 +1,14 @@
 <template>
   <div class="mt-6 ml-6">
-    <p class="text-h5">我的收藏</p>
+    <p class="text-h5">搜尋結果</p>
     <v-spacer />
     <v-btn
       color="primary lighten-1"
       large
       depressed
-      :outlined="$route.path !== '/collections/post'"
+      :outlined="$route.path !== '/search/post'"
       tile
-      @click="$router.push({ name: 'CollectPost' })"
+      @click="$router.push({ name: 'SearchPost' })"
     >
       文章
     </v-btn>
@@ -17,9 +17,9 @@
       color="primary lighten-1"
       large
       depressed
-      :outlined="$route.path !== '/collections/product'"
+      :outlined="$route.path !== '/search/product'"
       tile
-      @click="$router.push({ name: 'CollectProduct' })"
+      @click="$router.push({ name: 'SearchProduct' })"
     >
       保險商品
     </v-btn>
@@ -28,9 +28,9 @@
       color="primary lighten-1"
       large
       depressed
-      :outlined="$route.path !== '/collections/salesman'"
+      :outlined="$route.path !== '/search/member'"
       tile
-      @click="$router.push({ name: 'CollectSalesman' })"
+      @click="$router.push({ name: 'SearchMember' })"
     >
       業務員
     </v-btn>

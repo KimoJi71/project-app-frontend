@@ -91,7 +91,6 @@
       </div>
     </v-card>
 
-    <BackBtn />
     <Loading />
     <Snackbar />
   </div>
@@ -100,7 +99,6 @@
 <script>
 import Header from "@/components/Header.vue";
 import CollectBtn from "@/components/collection/CollectBtn.vue";
-import BackBtn from "@/components/BackBtn.vue";
 import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
 import { mapState, mapMutations, mapActions } from "vuex";
@@ -110,7 +108,6 @@ export default {
   components: {
     Header,
     CollectBtn,
-    BackBtn,
     Snackbar,
     Loading,
   },

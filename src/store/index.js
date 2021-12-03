@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
+import search from "./modules/search";
 import post from "./modules/post";
 import product from "./modules/product";
 import member from "./modules/member";
@@ -32,6 +33,7 @@ export default new Vuex.Store({
     },
   },
   modules: {
+    search,
     post,
     product,
     member,

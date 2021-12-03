@@ -12,6 +12,8 @@
         dense
         solo
         rounded
+        v-model="keywords"
+        @click:append="search()"
       />
     </v-app-bar>
 
@@ -88,6 +90,7 @@ export default {
         // { name: "幫助中心", icon: "mdi-lightbulb", href: "/help" },
       ],
       memName: "",
+      keywords: "",
     };
   },
   computed: {
@@ -96,6 +99,11 @@ export default {
     }),
   },
   methods: {
+    search() {
+      localStorage.setItem("keywords", this.keywords);
+      this.$router.push({ name: "SearchPost" }).catch(() => {});
+      window.location.reload();
+    },
     logout() {
       this.$router.push({ name: "Login" });
       this.$cookies.remove("user_session");

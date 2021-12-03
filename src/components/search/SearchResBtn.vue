@@ -32,7 +32,7 @@
       tile
       @click="$router.push({ name: 'SearchMember' })"
     >
-      業務員
+      用戶
     </v-btn>
     <v-divider class="mt-6" />
 

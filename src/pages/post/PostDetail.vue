@@ -180,7 +180,7 @@
                   </v-list-item>
                 </v-list>
               </v-menu>
-              <div class="black--text mb-4 ml-14">
+              <div class="black--text mb-2 ml-14">
                 <v-textarea
                   v-if="isEdit && comment.memNum === memNum"
                   placeholder="請輸入內容"
@@ -196,6 +196,14 @@
                 />
                 <!-- eslint-disable-next-line prettier/prettier -->
                 <span v-else style="white-space: pre-wrap">{{ comment.commentContent }}</span>
+              </div>
+              <div class="mb-1 ml-12">
+                <v-btn icon color="grey">
+                  <v-icon>mdi-heart-outline</v-icon>
+                </v-btn>
+                <v-btn icon color="grey">
+                  <v-icon>mdi-alert</v-icon>
+                </v-btn>
               </div>
             </v-col>
           </v-row>

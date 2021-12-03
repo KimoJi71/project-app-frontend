@@ -19,6 +19,22 @@
         <span>
           · {{ $moment(post.postCreateAt).format("YYYY/MM/DD HH:mm:ss") }}</span
         >
+        <v-chip
+          class="mx-3"
+          color="grey"
+          outlined
+          small
+          v-if="post.memIdentify === 0"
+          >保戶</v-chip
+        >
+        <v-chip
+          class="mx-3"
+          color="grey"
+          outlined
+          small
+          v-if="post.memIdentify === 1"
+          >業務員</v-chip
+        >
         <v-menu offset-x rounded="lg" v-if="post.memNum === memNum">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="grey" icon right absolute v-bind="attrs" v-on="on">

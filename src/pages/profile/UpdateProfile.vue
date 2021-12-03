@@ -20,9 +20,9 @@
       </v-row>
       <v-row class="mb-4" align="center" justify="center">
         <v-btn color="blue" text @click="updatePassword">變更密碼</v-btn>
-        <v-btn color="blue" text v-if="profileInfo.memIdentify === 1"
+        <!-- <v-btn color="blue" text v-if="profileInfo.memIdentify === 1"
           >切換帳號</v-btn
-        >
+        > -->
       </v-row>
       <v-divider class="ml-4" />
       <v-card-text>

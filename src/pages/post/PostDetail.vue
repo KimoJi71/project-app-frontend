@@ -22,6 +22,22 @@
                 $moment(postData.postCreateAt).format("YYYY/MM/DD HH:mm:ss")
               }}</span
             >
+            <v-chip
+              class="mx-3"
+              color="grey"
+              outlined
+              small
+              v-if="postData.memIdentify === 0"
+              >保戶</v-chip
+            >
+            <v-chip
+              class="mx-3"
+              color="grey"
+              outlined
+              small
+              v-if="postData.memIdentify === 1"
+              >業務員</v-chip
+            >
             <v-menu offset-x rounded="lg" v-if="postData.memNum === memNum">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -123,6 +139,22 @@
                 {{
                   $moment(comment.commentCreateAt).format("YYYY/MM/DD HH:mm:ss")
                 }}</span
+              >
+              <v-chip
+                class="mx-3"
+                color="grey"
+                outlined
+                small
+                v-if="comment.memIdentify === 0"
+                >保戶</v-chip
+              >
+              <v-chip
+                class="mx-3"
+                color="grey"
+                outlined
+                small
+                v-if="comment.memIdentify === 1"
+                >業務員</v-chip
               >
               <v-menu offset-x rounded="lg" v-if="comment.memNum === memNum">
                 <template v-slot:activator="{ on, attrs }">
@@ -238,6 +270,7 @@ export default {
         memNum: null,
         memName: null,
         memPhoto: null,
+        memIdentify: null,
         likeNumber: 0,
         commentNumber: 0,
         isLike: false,

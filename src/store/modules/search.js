@@ -56,7 +56,7 @@ const mutations = {
   setProducts(state, products) {
     state.products = products;
   },
-  setmembers(state, members) {
+  setMembers(state, members) {
     state.members = members;
   },
 };

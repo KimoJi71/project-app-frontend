@@ -7,6 +7,7 @@
       </v-toolbar-title>
       <v-spacer /><v-spacer /><v-spacer />
       <v-text-field
+        placeholder="輸入你想搜尋的關鍵字"
         append-icon="mdi-magnify"
         class="mt-6 ml-9"
         dense

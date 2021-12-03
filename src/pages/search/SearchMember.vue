@@ -15,7 +15,7 @@
 
     <!-- 有資料時render -->
     <v-row class="mt-6 mx-6" align="center" justify="start" v-else>
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="3" v-for="member in members" :key="member.memNum">
         <v-card class="mb-3" elevation="3">
           <v-row align="center" justify="center">
             <v-avatar class="my-3" color="grey" size="60">
@@ -23,80 +23,73 @@
             </v-avatar>
           </v-row>
           <v-row align="center" justify="center">
-            <span class="text-h6 mb-3">野原新之助</span>
+            <router-link
+              class="indigo--text text-h6 mb-3"
+              :to="`/profile/${member.memNum}`"
+              >{{ member.memName }}</router-link
+            >
           </v-row>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="3">
-        <v-card class="mb-3" elevation="3">
-          <v-row align="center" justify="center">
-            <v-avatar class="my-3" color="grey" size="60">
-              <v-icon dark large>mdi-account</v-icon>
-            </v-avatar>
+          <v-row
+            align="center"
+            justify="center"
+            v-if="member.memIdentify === 0"
+          >
+            <v-chip class="mb-3" color="grey" outlined>保戶</v-chip>
           </v-row>
-          <v-row align="center" justify="center">
-            <span class="text-h6 mb-3">野原廣志</span>
-          </v-row>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="3">
-        <v-card class="mb-3" elevation="3">
-          <v-row align="center" justify="center">
-            <v-avatar class="my-3" color="grey" size="60">
-              <v-icon dark large>mdi-account</v-icon>
-            </v-avatar>
-          </v-row>
-          <v-row align="center" justify="center">
-            <span class="text-h6 mb-3">櫻田妮妮</span>
-          </v-row>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="3">
-        <v-card class="mb-3" elevation="3">
-          <v-row align="center" justify="center">
-            <v-avatar class="my-3" color="grey" size="60">
-              <v-icon dark large>mdi-account</v-icon>
-            </v-avatar>
-          </v-row>
-          <v-row align="center" justify="center">
-            <span class="text-h6 mb-3">風間徹</span>
-          </v-row>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="3">
-        <v-card class="mb-3" elevation="3">
-          <v-row align="center" justify="center">
-            <v-avatar class="my-3" color="grey" size="60">
-              <v-icon dark large>mdi-account</v-icon>
-            </v-avatar>
-          </v-row>
-          <v-row align="center" justify="center">
-            <span class="text-h6 mb-3">小白</span>
+          <v-row
+            align="center"
+            justify="center"
+            v-if="member.memIdentify === 1"
+          >
+            <v-chip class="mb-3" color="grey" outlined>業務員</v-chip>
           </v-row>
         </v-card>
       </v-col>
     </v-row>
+
+    <Loading />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
 import SearchResBtn from "@/components/search/SearchResBtn.vue";
+import Loading from "@/components/Loading.vue";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "SearchMember",
   components: {
     Header,
     SearchResBtn,
+    Loading,
   },
   data() {
     return {
       isData: false,
+      memNum: parseInt(this.$cookies.get("user_session")),
+      membersData: [],
     };
+  },
+  computed: {
+    ...mapState({
+      members: (state) => state.search.members,
+    }),
+  },
+  methods: {
+    ...mapActions({
+      getSearchMember: "search/getSearchMember",
+    }),
+  },
+  async mounted() {
+    const keywords = localStorage.getItem("keywords");
+    try {
+      await this.getSearchMember(keywords);
+      this.membersData = this.members;
+      if (this.membersData.length === 0) this.isData = true;
+    } catch (err) {
+      console.log(err);
+    }
   },
 };
 </script>

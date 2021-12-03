@@ -102,7 +102,7 @@ export default {
     search() {
       localStorage.setItem("keywords", this.keywords);
       this.$router.push({ name: "SearchPost" }).catch(() => {});
-      window.location.reload();
+      if (this.$route.path === "/search/post") window.location.reload();
     },
     logout() {
       this.$router.push({ name: "Login" });

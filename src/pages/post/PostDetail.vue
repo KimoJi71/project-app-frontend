@@ -13,7 +13,7 @@
               >
               <v-img
                 v-else
-                contain
+                cover
                 :src="'http://localhost:3000/images\\' + postData.memPhoto"
               />
             </v-list-item-avatar>
@@ -116,7 +116,7 @@
               <v-icon v-if="memPhoto === null" dark>mdi-account</v-icon>
               <v-img
                 v-else
-                contain
+                cover
                 :src="'http://localhost:3000/images\\' + memPhoto"
               />
             </v-avatar>
@@ -145,7 +145,7 @@
                 >
                 <v-img
                   v-else
-                  contain
+                  cover
                   :src="'http://localhost:3000/images\\' + comment.memPhoto"
                 />
               </v-list-item-avatar>

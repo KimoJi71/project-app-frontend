@@ -13,18 +13,61 @@
           offset-x="20"
           offset-y="20"
         >
-          <v-avatar class="mt-6" color="grey" size="85">
-            <v-icon dark x-large>mdi-account</v-icon>
+          <v-avatar
+            class="mt-6"
+            color="grey"
+            size="85"
+            @click="onSelect = !onSelect"
+          >
+            <v-icon v-if="memPhoto === null" dark x-large>mdi-account</v-icon>
+            <v-img v-else cover :src="memPhoto" />
           </v-avatar>
-          <!-- <v-file-input
-            class="ml-15"
-            accept="image/*"
-            hide-input
-            prepend-icon="mdi-camera"
-          /> -->
         </v-badge>
       </v-row>
-      <v-row class="mb-4" align="center" justify="center">
+      <v-row v-if="onSelect" class="mb-4" align="center" justify="center">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              dark
+              fab
+              outlined
+              small
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-file-input
+                class="ml-2 mb-1 primary--text"
+                accept="image/*"
+                hide-input
+                prepend-icon="mdi-paperclip"
+                dense
+                @change="imgSelected($event)"
+              />
+            </v-btn>
+          </template>
+          <span>選擇圖片</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              class="ml-5"
+              color="blue-grey"
+              dark
+              fab
+              outlined
+              small
+              v-bind="attrs"
+              v-on="on"
+              @click="uploadImg()"
+            >
+              <v-icon>mdi-upload</v-icon>
+            </v-btn>
+          </template>
+          <span>上傳</span>
+        </v-tooltip>
+      </v-row>
+      <v-row no-gutters class="mb-4" align="center" justify="center">
         <v-btn color="blue" text @click="updatePassword">變更密碼</v-btn>
       </v-row>
       <v-divider class="ml-4" />
@@ -236,6 +279,11 @@ export default {
   },
   data() {
     return {
+      // 上傳頭貼
+      onSelect: false,
+      memPhoto: null,
+      uploadMemPhoto: null,
+
       dialogVisible: false,
       memNum: parseInt(this.$route.params.memNum),
       menu: false,
@@ -250,6 +298,40 @@ export default {
     }),
   },
   methods: {
+    // 上傳頭貼
+    imgSelected(evt) {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        this.memPhoto = reader.result; // base64 code
+        this.uploadMemPhoto = evt;
+      });
+      reader.readAsDataURL(evt);
+    },
+    async uploadImg() {
+      try {
+        const payload = {
+          memNum: this.memNum,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        };
+        const imgData = new FormData();
+        imgData.append("memPhoto", this.uploadMemPhoto);
+        const res = await this.$api.image.uploadMemPhoto(payload, imgData);
+        if (res.message === "照片上傳成功") {
+          this.setPopupStatus(true, { root: true });
+          this.setPopupDetails(
+            { popupMsgColor: "green", popupMsg: "照片上傳成功" },
+            { root: true }
+          );
+          this.onSelect = false;
+          this.getMemProfile();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    // 變更密碼點選後，開啟 dialog
     updatePassword() {
       this.dialogVisible = true;
     },
@@ -292,6 +374,25 @@ export default {
     goBack() {
       this.$router.back(-1);
     },
+    async getMemProfile() {
+      if (this.memNum) {
+        try {
+          await this.getProfile(this.memNum);
+          this.profileInfo = this.profile.data;
+          this.profileInfo.memBirth = this.$moment(
+            this.profileInfo.memBirth
+          ).format("YYYY-MM-DD");
+          this.memPhoto =
+            "http://localhost:3000/images\\" + this.profileInfo.memPhoto;
+          if (this.profileInfo.memIdentify === 1) {
+            this.profileInfo.memService =
+              this.profileInfo.memService.split(",");
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
     ...mapActions({
       getProfile: "member/getProfile",
     }),
@@ -303,20 +404,7 @@ export default {
     }),
   },
   async mounted() {
-    if (this.memNum) {
-      try {
-        await this.getProfile(this.memNum);
-        this.profileInfo = this.profile.data;
-        this.profileInfo.memBirth = this.$moment(
-          this.profileInfo.memBirth
-        ).format("YYYY-MM-DD");
-        if (this.profileInfo.memIdentify === 1) {
-          this.profileInfo.memService = this.profileInfo.memService.split(",");
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    this.getMemProfile();
   },
 };
 </script>

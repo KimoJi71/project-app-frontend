@@ -4,6 +4,7 @@ import post from "./post";
 import comment from "./comment";
 import product from "./product";
 import member from "./member";
+import image from "./image";
 import collection from "./collection";
 
 export default {
@@ -13,5 +14,6 @@ export default {
   comment,
   product,
   member,
+  image,
   collection,
 };

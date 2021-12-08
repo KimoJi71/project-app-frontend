@@ -30,7 +30,7 @@
           <v-icon v-if="memPhoto === null" dark>mdi-account</v-icon>
           <v-img
             v-else
-            contain
+            cover
             :src="'http://localhost:3000/images\\' + memPhoto"
           />
         </v-list-item-avatar>
@@ -124,16 +124,18 @@ export default {
       getProfile: "member/getProfile",
     }),
   },
-  async mounted() {
-    if (this.memNum) {
-      try {
-        await this.getProfile(this.memNum);
-        this.memName = this.profile.data.memName;
-        this.memPhoto = this.profile.data.memPhoto;
-      } catch (err) {
-        console.log(err);
+  watch: {
+    async drawer() {
+      if (this.memNum) {
+        try {
+          await this.getProfile(this.memNum);
+          this.memName = this.profile.data.memName;
+          this.memPhoto = this.profile.data.memPhoto;
+        } catch (err) {
+          console.log(err);
+        }
       }
-    }
+    },
   },
 };
 </script>

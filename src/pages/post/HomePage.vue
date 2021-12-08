@@ -14,7 +14,7 @@
           <v-icon v-if="post.memPhoto === null" dark>mdi-account</v-icon>
           <v-img
             v-else
-            contain
+            cover
             :src="'http://localhost:3000/images\\' + post.memPhoto"
           />
         </v-list-item-avatar>

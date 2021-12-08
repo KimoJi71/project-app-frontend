@@ -10,7 +10,7 @@
           <v-icon v-if="postData.memName === null" dark>mdi-account</v-icon>
           <v-img
             v-else
-            contain
+            cover
             :src="'http://localhost:3000/images\\' + postData.memPhoto"
           />
         </v-list-item-avatar>

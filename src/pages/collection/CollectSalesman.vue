@@ -24,7 +24,7 @@
               >
               <v-img
                 v-else
-                contain
+                cover
                 :src="'http://localhost:3000/images\\' + salesman.memPhoto"
               />
             </v-avatar>

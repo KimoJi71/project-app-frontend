@@ -11,16 +11,14 @@
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  class="mt-4 mr-8"
+                  class="mt-4 mr-6"
                   color="red"
-                  fab
-                  outlined
-                  x-small
+                  icon
                   v-bind="attrs"
                   v-on="on"
                   @click.prevent="closeDialog"
                 >
-                  <v-icon>mdi-close</v-icon>
+                  <v-icon large>mdi-close-circle-outline</v-icon>
                 </v-btn>
               </template>
               <span>關閉</span>

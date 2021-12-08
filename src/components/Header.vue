@@ -110,7 +110,9 @@ export default {
       this.$cookies.remove("user_session");
     },
     login() {
-      this.$router.push({ name: "Login" });
+      this.$router.push({ name: "Login" }).then(() => {
+        window.location.reload();
+      });
     },
     ...mapActions({
       getProfile: "member/getProfile",

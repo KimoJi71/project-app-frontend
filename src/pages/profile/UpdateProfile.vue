@@ -8,21 +8,24 @@
           style="cursor: pointer"
           bottom
           bordered
-          color="black"
           icon="mdi-camera"
-          offset-x="20"
-          offset-y="20"
+          color="black"
+          offset-x="30"
+          offset-y="25"
         >
           <v-avatar class="mt-6" color="grey" size="85">
             <v-icon dark x-large>mdi-account</v-icon>
           </v-avatar>
+          <v-file-input
+            class="ml-15"
+            accept="image/*"
+            hide-input
+            prepend-icon="mdi-camera"
+          />
         </v-badge>
       </v-row>
       <v-row class="mb-4" align="center" justify="center">
         <v-btn color="blue" text @click="updatePassword">變更密碼</v-btn>
-        <!-- <v-btn color="blue" text v-if="profileInfo.memIdentify === 1"
-          >切換帳號</v-btn
-        > -->
       </v-row>
       <v-divider class="ml-4" />
       <v-card-text>

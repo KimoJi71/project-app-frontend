@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import search from "./modules/search";
 import post from "./modules/post";
+import comment from "./modules/comment";
 import product from "./modules/product";
 import member from "./modules/member";
 import collection from "./modules/collection";
@@ -35,6 +36,7 @@ export default new Vuex.Store({
   modules: {
     search,
     post,
+    comment,
     product,
     member,
     collection,

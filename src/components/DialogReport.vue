@@ -11,16 +11,14 @@
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  class="mt-4 mr-8"
+                  class="mt-4 mr-6"
                   color="red"
-                  fab
-                  outlined
-                  x-small
+                  icon
                   v-bind="attrs"
                   v-on="on"
                   @click.prevent="closeDialog"
                 >
-                  <v-icon>mdi-close</v-icon>
+                  <v-icon large>mdi-close-circle-outline</v-icon>
                 </v-btn>
               </template>
               <span>關閉</span>
@@ -103,6 +101,20 @@ export default {
             reportReason: this.content,
           });
           if (res.message === "成功檢舉貼文") {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "green", popupMsg: "已收到您的檢舉" },
+              { root: true }
+            );
+            this.$emit("closeDialog");
+          }
+        }
+        if (this.title === "檢舉留言") {
+          const res = await this.$api.comment.reportComment(this.num, {
+            memNum: this.memNum,
+            reportReason: this.content,
+          });
+          if (res.message === "成功檢舉留言") {
             this.setPopupStatus(true, { root: true });
             this.setPopupDetails(
               { popupMsgColor: "green", popupMsg: "已收到您的檢舉" },

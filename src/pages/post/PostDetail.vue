@@ -3,7 +3,7 @@
     <Header />
     <br /><br /><br />
     <!-- 文章內容 -->
-    <v-card class="mx-auto my-6" max-width="80%" elevation="3">
+    <v-card class="mx-auto my-6" max-width="75%" elevation="3">
       <v-card-text>
         <v-row>
           <v-col>
@@ -78,13 +78,13 @@
             offset-x="10"
             offset-y="10"
           >
-            <v-btn icon @click="onLike()">
+            <v-btn icon @click="onLikePost()">
               <v-icon color="red">{{
                 postData.isLike ? "mdi-heart" : "mdi-heart-outline"
               }}</v-icon>
             </v-btn>
           </v-badge>
-          <v-btn icon @click="report(postData.postNum)">
+          <v-btn icon @click="reportPost(postData.postNum)">
             <v-icon color="warning">mdi-alert</v-icon>
           </v-btn>
           <v-btn icon>
@@ -121,9 +121,9 @@
           </v-col>
         </v-row>
 
-        <v-divider class="mb-2" v-if="comments.length !== 0" />
+        <v-divider class="mb-2" v-if="commentsData.length !== 0" />
 
-        <div v-for="(comment, idx) in comments" :key="idx">
+        <div v-for="(comment, idx) in commentsData" :key="idx">
           <v-row>
             <v-col>
               <v-list-item-avatar color="grey">
@@ -197,17 +197,35 @@
                 <!-- eslint-disable-next-line prettier/prettier -->
                 <span v-else style="white-space: pre-wrap">{{ comment.commentContent }}</span>
               </div>
-              <div class="mb-1 ml-12">
-                <v-btn icon color="grey">
-                  <v-icon>mdi-heart-outline</v-icon>
-                </v-btn>
-                <v-btn icon color="grey">
+              <div class="mt-4 mb-1 ml-12">
+                <v-badge
+                  :content="comment.likeNumber === 0 ? '0' : comment.likeNumber"
+                  color="red"
+                  offset-x="10"
+                  offset-y="10"
+                >
+                  <v-btn
+                    icon
+                    color="red"
+                    @click="onLikeComment(comment.commentNum, comment.isLike)"
+                  >
+                    <v-icon>{{
+                      comment.isLike ? "mdi-heart" : "mdi-heart-outline"
+                    }}</v-icon>
+                  </v-btn>
+                </v-badge>
+                <v-btn
+                  class="ml-2"
+                  icon
+                  color="warning"
+                  @click="reportComment(comment.commentNum)"
+                >
                   <v-icon>mdi-alert</v-icon>
                 </v-btn>
               </div>
             </v-col>
           </v-row>
-          <v-divider class="mb-2" v-if="idx < comments.length - 1" />
+          <v-divider class="mb-2" v-if="idx < commentsData.length - 1" />
         </div>
       </v-card-text>
     </v-card>
@@ -215,8 +233,8 @@
     <DialogReport
       :visible.sync="dialogVisible"
       v-if="dialogVisible"
-      :title="'檢舉文章'"
-      :num="postNum"
+      :title="dialogTitle"
+      :num="num"
       @closeDialog="onCancel"
     />
     <Snackbar />
@@ -245,7 +263,8 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      postNum: null,
+      dialogTitle: "",
+      num: null,
       postMenuItems: [
         {
           title: "編輯",
@@ -284,23 +303,30 @@ export default {
         isLike: false,
         isCollect: false,
       },
-      comments: {},
+      commentsData: [],
     };
   },
   computed: {
     ...mapState({
       popupStatus: (state) => state.popupStatus,
       posts: (state) => state.post.posts,
+      comments: (state) => state.comment.comments,
     }),
   },
   methods: {
-    report(postNum) {
+    reportPost(postNum) {
       this.dialogVisible = true;
-      this.postNum = postNum;
+      this.dialogTitle = "檢舉文章";
+      this.num = postNum;
+    },
+    reportComment(commentNum) {
+      this.dialogVisible = true;
+      this.dialogTitle = "檢舉留言";
+      this.num = commentNum;
     },
     onCancel() {
       this.dialogVisible = false;
-      this.postNum = null;
+      this.num = null;
     },
     async deletePost(postNum) {
       try {
@@ -385,7 +411,7 @@ export default {
       }
     },
     // 文章按讚相關
-    async onLike() {
+    async onLikePost() {
       if (this.postData.isLike) {
         try {
           const res = await this.$api.post.cancelLikePost(
@@ -460,6 +486,50 @@ export default {
           this.postData.isCollect = true;
       });
     },
+    // 留言按讚相關
+    async onLikeComment(commentNum, isLike) {
+      if (isLike) {
+        try {
+          const res = await this.$api.comment.cancelLikeComment(
+            commentNum,
+            this.memNum
+          );
+          if (res.message === "成功取消留言按讚") {
+            this.commentsData.map((item) => {
+              if (item.commentNum === commentNum) {
+                item.isLike = false;
+                item.likeNumber -= 1;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        try {
+          const res = await this.$api.comment.likeComment(commentNum, {
+            memNum: this.memNum,
+          });
+          if (res.message === "成功為留言按讚") {
+            this.commentsData.map((item) => {
+              if (item.commentNum === commentNum) {
+                item.isLike = true;
+                item.likeNumber += 1;
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async checkLikeComment(comment) {
+      const res = await this.$api.comment.checkLikeComment(
+        comment.commentNum,
+        this.memNum
+      );
+      if (res.message === "已按讚") comment.isLike = true;
+    },
     goBack() {
       this.$router.back(-1);
     },
@@ -480,8 +550,11 @@ export default {
       try {
         this.setLoadingStatus(null, { root: true });
         this.setLoadingMsg("Loading...", { root: true });
-        const res = await this.$api.comment.getComments(this.postData.postNum);
-        this.comments = res;
+        await this.getComments(this.postData.postNum);
+        this.commentsData = this.comments;
+        this.commentsData.map((item) => {
+          this.checkLikeComment(item);
+        });
         this.setLoadingStatus(null, { root: true });
         this.setLoadingMsg("", { root: true });
       } catch (err) {
@@ -490,6 +563,7 @@ export default {
     },
     ...mapActions({
       getPosts: "post/getPosts",
+      getComments: "comment/getComments",
       getCollectPost: "collection/getCollectPost",
     }),
     ...mapMutations({

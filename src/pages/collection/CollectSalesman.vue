@@ -19,14 +19,23 @@
         <v-card class="mb-3" elevation="3">
           <v-row align="center" justify="center">
             <v-avatar class="my-3" color="grey" size="60">
-              <v-icon dark large>mdi-account</v-icon>
+              <v-icon v-if="salesman.memPhoto === null" dark large
+                >mdi-account</v-icon
+              >
+              <v-img
+                v-else
+                contain
+                :src="'http://localhost:3000/images\\' + salesman.memPhoto"
+              />
             </v-avatar>
           </v-row>
           <v-row align="center" justify="center">
-            <span class="text-h6">{{ salesman.memName }}</span>
+            <router-link
+              class="indigo--text text-h6 mb-3"
+              :to="`/profile/${salesman.memNum}`"
+              >{{ salesman.memName }}</router-link
+            >
           </v-row>
-
-          <v-divider class="mt-4 mb-2" />
           <v-card-text class="text-h6 grey--text">
             <v-row align="center" justify="center">
               {{ salesman.memCompany }}

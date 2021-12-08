@@ -10,18 +10,18 @@
           bordered
           icon="mdi-camera"
           color="black"
-          offset-x="30"
-          offset-y="25"
+          offset-x="20"
+          offset-y="20"
         >
           <v-avatar class="mt-6" color="grey" size="85">
             <v-icon dark x-large>mdi-account</v-icon>
           </v-avatar>
-          <v-file-input
+          <!-- <v-file-input
             class="ml-15"
             accept="image/*"
             hide-input
             prepend-icon="mdi-camera"
-          />
+          /> -->
         </v-badge>
       </v-row>
       <v-row class="mb-4" align="center" justify="center">

@@ -7,7 +7,12 @@
       <v-divider class="ml-4" />
       <v-card-text>
         <v-list-item-avatar color="grey">
-          <v-icon dark>mdi-account</v-icon>
+          <v-icon v-if="memPhoto === null" dark>mdi-account</v-icon>
+          <v-img
+            v-else
+            contain
+            :src="'http://localhost:3000/images\\' + memPhoto"
+          />
         </v-list-item-avatar>
         <span style="font-size: 18px">{{ memName }}</span>
         <v-row class="mx-1 mt-4">
@@ -45,6 +50,7 @@ export default {
     return {
       postContent: "",
       memName: "",
+      memPhoto: null,
     };
   },
   computed: {
@@ -87,6 +93,7 @@ export default {
     try {
       await this.getProfile(this.$cookies.get("user_session"));
       this.memName = this.profile.data.memName;
+      this.memPhoto = this.profile.data.memPhoto;
     } catch (err) {
       console.log(err);
     }

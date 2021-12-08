@@ -230,33 +230,35 @@ export default {
     },
     // 商品按讚相關
     async onLike() {
-      if (this.tableData.isLike) {
-        try {
-          const res = await this.$api.product.cancelLikeProduct(
-            this.tableData.proNum,
-            this.memNum
-          );
-          if (res.message === "成功取消商品按讚") {
-            this.tableData.isLike = false;
-            this.tableData.likeNumber -= 1;
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      } else {
-        try {
-          const res = await this.$api.product.likeProduct(
-            this.tableData.proNum,
-            {
-              memNum: this.memNum,
+      if (this.memNum) {
+        if (this.tableData.isLike) {
+          try {
+            const res = await this.$api.product.cancelLikeProduct(
+              this.tableData.proNum,
+              this.memNum
+            );
+            if (res.message === "成功取消商品按讚") {
+              this.tableData.isLike = false;
+              this.tableData.likeNumber -= 1;
             }
-          );
-          if (res.message === "成功為商品按讚") {
-            this.tableData.isLike = true;
-            this.tableData.likeNumber += 1;
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.product.likeProduct(
+              this.tableData.proNum,
+              {
+                memNum: this.memNum,
+              }
+            );
+            if (res.message === "成功為商品按讚") {
+              this.tableData.isLike = true;
+              this.tableData.likeNumber += 1;
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       }
     },
@@ -275,31 +277,33 @@ export default {
     },
     // 商品收藏相關
     async onCollect() {
-      if (this.tableData.isCollect) {
-        try {
-          const res = await this.$api.collection.cancelCollectProduct(
-            this.tableData.proNum,
-            this.memNum
-          );
-          if (res.message === "成功取消商品收藏") {
-            this.tableData.isCollect = false;
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      } else {
-        try {
-          const res = await this.$api.collection.collectProduct(
-            this.tableData.proNum,
-            {
-              memNum: this.memNum,
+      if (this.memNum) {
+        if (this.tableData.isCollect) {
+          try {
+            const res = await this.$api.collection.cancelCollectProduct(
+              this.tableData.proNum,
+              this.memNum
+            );
+            if (res.message === "成功取消商品收藏") {
+              this.tableData.isCollect = false;
             }
-          );
-          if (res.message === "成功收藏了商品") {
-            this.tableData.isCollect = true;
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.collection.collectProduct(
+              this.tableData.proNum,
+              {
+                memNum: this.memNum,
+              }
+            );
+            if (res.message === "成功收藏了商品") {
+              this.tableData.isCollect = true;
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       }
     },
@@ -334,8 +338,10 @@ export default {
         return item.proNum === parseInt(this.$route.params.proNum);
       });
       this.tableData = data[0];
-      this.checkLikeProduct();
-      this.checkCollectProduct();
+      if (this.memNum) {
+        this.checkLikeProduct();
+        this.checkCollectProduct();
+      }
     } catch (err) {
       console.log(err);
     }

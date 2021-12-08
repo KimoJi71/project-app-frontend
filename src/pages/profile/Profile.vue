@@ -12,7 +12,14 @@
           <v-list>
             <v-list-item>
               <v-list-item-avatar class="mx-auto" color="grey" size="85">
-                <v-icon dark x-large>mdi-account</v-icon>
+                <v-icon v-if="memPhoto === null" dark x-large
+                  >mdi-account</v-icon
+                >
+                <v-img
+                  v-else
+                  contain
+                  :src="'http://localhost:3000/images\\' + memPhoto"
+                />
               </v-list-item-avatar>
             </v-list-item>
             <v-list-item>
@@ -137,7 +144,12 @@
           <v-card class="mb-4" width="90%" elevation="3">
             <v-card-text>
               <v-list-item-avatar color="grey">
-                <v-icon dark>mdi-account</v-icon>
+                <v-icon v-if="memPhoto === null" dark>mdi-account</v-icon>
+                <v-img
+                  v-else
+                  contain
+                  :src="'http://localhost:3000/images\\' + memPhoto"
+                />
               </v-list-item-avatar>
               <span
                 >{{ post.memName }} ·
@@ -275,6 +287,7 @@ export default {
       dialogTitle: "",
       num: null,
       memNum: parseInt(this.$route.params.memNum),
+      memPhoto: null,
       screenWidth: document.body.clientWidth,
       show: false,
       menuItems: [
@@ -471,6 +484,7 @@ export default {
       try {
         await this.getProfile(this.memNum);
         this.profileInfo = this.profile.data;
+        this.memPhoto = this.profileInfo.memPhoto;
         if (this.profileInfo.memIdentify === 1) {
           this.profileItem[0].content = this.profileInfo.memCompany;
           this.profileItem[1].content = this.profileInfo.memService

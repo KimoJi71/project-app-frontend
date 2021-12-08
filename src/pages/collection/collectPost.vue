@@ -24,7 +24,12 @@
     >
       <v-card-text>
         <v-list-item-avatar color="grey">
-          <v-icon dark>mdi-account</v-icon>
+          <v-icon v-if="post.memPhoto === null" dark>mdi-account</v-icon>
+          <v-img
+            v-else
+            contain
+            :src="'http://localhost:3000/images\\' + post.memPhoto"
+          />
         </v-list-item-avatar>
         <router-link class="indigo--text" :to="`/profile/${post.memNum}`">{{
           post.memName

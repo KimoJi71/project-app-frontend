@@ -8,7 +8,14 @@
         <v-row>
           <v-col>
             <v-list-item-avatar color="grey">
-              <v-icon dark>mdi-account</v-icon>
+              <v-icon v-if="postData.memPhoto === null" dark
+                >mdi-account</v-icon
+              >
+              <v-img
+                v-else
+                contain
+                :src="'http://localhost:3000/images\\' + postData.memPhoto"
+              />
             </v-list-item-avatar>
             <router-link
               class="indigo--text"
@@ -105,16 +112,22 @@
         <!-- 留言區塊 -->
         <v-row class="mt-4">
           <v-col class="d-flex" cols="12">
-            <v-list-item-avatar color="grey">
-              <v-icon dark>mdi-account</v-icon>
-            </v-list-item-avatar>
+            <v-avatar class="mt-3" color="grey" size="40">
+              <v-icon v-if="memPhoto === null" dark>mdi-account</v-icon>
+              <v-img
+                v-else
+                contain
+                :src="'http://localhost:3000/images\\' + memPhoto"
+              />
+            </v-avatar>
             <v-textarea
               label="回應......"
-              class="mr-4"
+              class="mx-4"
               append-icon="mdi-send"
               no-resize
               rows="2"
               outlined
+              rounded
               v-model="commentContent"
               @click:append="createComment(postData.postNum)"
             />
@@ -127,7 +140,14 @@
           <v-row>
             <v-col>
               <v-list-item-avatar color="grey">
-                <v-icon dark>mdi-account</v-icon>
+                <v-icon v-if="comment.memPhoto === null" dark
+                  >mdi-account</v-icon
+                >
+                <v-img
+                  v-else
+                  contain
+                  :src="'http://localhost:3000/images\\' + comment.memPhoto"
+                />
               </v-list-item-avatar>
               <router-link
                 class="indigo--text"
@@ -287,6 +307,7 @@ export default {
         },
       ],
       memNum: parseInt(this.$cookies.get("user_session")),
+      memPhoto: null,
       commentContent: "",
       isEdit: false,
       postData: {
@@ -311,6 +332,7 @@ export default {
       popupStatus: (state) => state.popupStatus,
       posts: (state) => state.post.posts,
       comments: (state) => state.comment.comments,
+      profile: (state) => state.member.profile,
     }),
   },
   methods: {
@@ -578,6 +600,7 @@ export default {
     this.getPostsInfo();
     // 取得留言
     this.getCommentsInfo();
+    this.memPhoto = this.profile.data.memPhoto;
   },
 };
 </script>

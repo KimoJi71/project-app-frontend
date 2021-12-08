@@ -27,7 +27,12 @@
     >
       <v-list-item v-if="memNum" link :to="`/profile/${memNum}`">
         <v-list-item-avatar color="grey">
-          <v-icon dark>mdi-account</v-icon>
+          <v-icon v-if="memPhoto === null" dark>mdi-account</v-icon>
+          <v-img
+            v-else
+            contain
+            :src="'http://localhost:3000/images\\' + memPhoto"
+          />
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>{{ memName }}</v-list-item-title>
@@ -91,6 +96,7 @@ export default {
         // { name: "幫助中心", icon: "mdi-lightbulb", href: "/help" },
       ],
       memName: "",
+      memPhoto: null,
       keywords: "",
     };
   },
@@ -123,6 +129,7 @@ export default {
       try {
         await this.getProfile(this.memNum);
         this.memName = this.profile.data.memName;
+        this.memPhoto = this.profile.data.memPhoto;
       } catch (err) {
         console.log(err);
       }

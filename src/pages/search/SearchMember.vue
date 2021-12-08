@@ -19,7 +19,14 @@
         <v-card class="mb-3" elevation="3">
           <v-row align="center" justify="center">
             <v-avatar class="my-3" color="grey" size="60">
-              <v-icon dark large>mdi-account</v-icon>
+              <v-icon v-if="member.memPhoto === null" dark large
+                >mdi-account</v-icon
+              >
+              <v-img
+                v-else
+                contain
+                :src="'http://localhost:3000/images\\' + member.memPhoto"
+              />
             </v-avatar>
           </v-row>
           <v-row align="center" justify="center">

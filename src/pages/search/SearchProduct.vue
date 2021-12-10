@@ -118,7 +118,7 @@ export default {
     return {
       isData: false,
       screenWidth: document.body.clientWidth,
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       productsData: [],
     };
   },

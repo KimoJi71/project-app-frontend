@@ -206,7 +206,7 @@ export default {
   data() {
     return {
       screenWidth: document.body.clientWidth,
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       show: false,
       page: 1,
 

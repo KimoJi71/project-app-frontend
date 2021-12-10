@@ -63,7 +63,7 @@ export default {
     async save() {
       try {
         const res = await this.$api.post.createPost({
-          memNum: this.$cookies.get("user_session"),
+          memNum: this.$cookies.get("user_permission"),
           postContent: this.postContent,
         });
         if (res.message === "文章新增成功") {
@@ -91,7 +91,7 @@ export default {
   },
   async mounted() {
     try {
-      await this.getProfile(this.$cookies.get("user_session"));
+      await this.getProfile(this.$cookies.get("user_permission"));
       this.memName = this.profile.data.memName;
       this.memPhoto = this.profile.data.memPhoto;
     } catch (err) {

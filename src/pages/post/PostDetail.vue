@@ -306,7 +306,7 @@ export default {
           action: (commentNum) => this.deleteComment(commentNum),
         },
       ],
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       memPhoto: null,
       commentContent: "",
       isEdit: false,

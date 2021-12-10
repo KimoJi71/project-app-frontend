@@ -135,7 +135,7 @@ export default {
       isData: false,
       dialogVisible: false,
       postNum: null,
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       postsData: [],
     };
   },

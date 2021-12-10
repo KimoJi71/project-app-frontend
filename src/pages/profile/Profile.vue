@@ -30,7 +30,7 @@
               </v-list-item-content>
             </v-list-item>
             <v-list-item
-              v-if="memNum === parseInt($cookies.get('user_session'))"
+              v-if="memNum === parseInt($cookies.get('user_permission'))"
             >
               <v-list-item-content>
                 <v-row align="center" justify="center">
@@ -95,7 +95,7 @@
               class="mt-4 pb-1"
               align="center"
               justify="center"
-              v-if="memNum !== parseInt($cookies.get('user_session'))"
+              v-if="memNum !== parseInt($cookies.get('user_permission'))"
             >
               <v-badge
                 :content="profileInfo.likeNum === 0 ? '0' : profileInfo.likeNum"
@@ -176,7 +176,7 @@
               <v-menu
                 offset-x
                 rounded="lg"
-                v-if="memNum === parseInt($cookies.get('user_session'))"
+                v-if="memNum === parseInt($cookies.get('user_permission'))"
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
@@ -368,7 +368,7 @@ export default {
         try {
           const res = await this.$api.post.cancelLikePost(
             postNum,
-            parseInt(this.$cookies.get("user_session"))
+            parseInt(this.$cookies.get("user_permission"))
           );
           if (res.message === "成功取消貼文按讚") {
             this.postsData.map((item) => {
@@ -384,7 +384,7 @@ export default {
       } else {
         try {
           const res = await this.$api.post.likePost(postNum, {
-            memNum: parseInt(this.$cookies.get("user_session")),
+            memNum: parseInt(this.$cookies.get("user_permission")),
           });
           if (res.message === "成功為貼文按讚") {
             this.postsData.map((item) => {
@@ -403,7 +403,7 @@ export default {
       try {
         const res = await this.$api.post.checkLikePost(
           post.postNum,
-          parseInt(this.$cookies.get("user_session"))
+          parseInt(this.$cookies.get("user_permission"))
         );
         if (res.message === "已按讚") {
           post.isLike = true;
@@ -418,7 +418,7 @@ export default {
         try {
           const res = await this.$api.collection.cancelCollectPost(
             postNum,
-            parseInt(this.$cookies.get("user_session"))
+            parseInt(this.$cookies.get("user_permission"))
           );
           if (res.message === "成功取消貼文收藏") {
             this.postsData.map((item) => {
@@ -433,7 +433,7 @@ export default {
       } else {
         try {
           const res = await this.$api.collection.collectPost(postNum, {
-            memNum: parseInt(this.$cookies.get("user_session")),
+            memNum: parseInt(this.$cookies.get("user_permission")),
           });
           if (res.message === "成功收藏了貼文") {
             this.postsData.map((item) => {
@@ -449,7 +449,7 @@ export default {
     },
     async checkCollectPost(post) {
       const res = await this.getCollectPost(
-        parseInt(this.$cookies.get("user_session"))
+        parseInt(this.$cookies.get("user_permission"))
       );
       res.map((item) => {
         if (item.postNum === post.postNum) post.isCollect = true;
@@ -506,7 +506,7 @@ export default {
         try {
           const res = await this.$api.member.cancelLikeSalesman(
             this.memNum,
-            parseInt(this.$cookies.get("user_session"))
+            parseInt(this.$cookies.get("user_permission"))
           );
           if (res.message === "成功取消業務員按讚") {
             this.profileInfo.isLike = false;
@@ -518,7 +518,7 @@ export default {
       } else {
         try {
           const res = await this.$api.member.likeSalesman(this.memNum, {
-            memNum: parseInt(this.$cookies.get("user_session")),
+            memNum: parseInt(this.$cookies.get("user_permission")),
           });
           if (res.message === "成功為業務員按讚") {
             this.profileInfo.isLike = true;
@@ -533,7 +533,7 @@ export default {
       try {
         const res = await this.$api.member.checkLikeSalesman(
           this.memNum,
-          parseInt(this.$cookies.get("user_session"))
+          parseInt(this.$cookies.get("user_permission"))
         );
         if (res.message === "已按讚") {
           this.profileInfo.isLike = true;
@@ -548,7 +548,7 @@ export default {
         try {
           const res = await this.$api.collection.cancelCollectSalesman(
             this.profileInfo.memNum,
-            parseInt(this.$cookies.get("user_session"))
+            parseInt(this.$cookies.get("user_permission"))
           );
           if (res.message === "成功取消業務員收藏") {
             this.profileInfo.isCollect = false;
@@ -561,7 +561,7 @@ export default {
           const res = await this.$api.collection.collectSalesman(
             this.profileInfo.memNum,
             {
-              memNum: parseInt(this.$cookies.get("user_session")),
+              memNum: parseInt(this.$cookies.get("user_permission")),
             }
           );
           if (res.message === "成功收藏了業務員") {
@@ -574,7 +574,7 @@ export default {
     },
     async checkCollectSalesman() {
       const res = await this.getCollectSalesman(
-        parseInt(this.$cookies.get("user_session"))
+        parseInt(this.$cookies.get("user_permission"))
       );
       res.map((item) => {
         if (item.memNum === this.profileInfo.memNum)

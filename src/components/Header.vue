@@ -87,7 +87,7 @@ export default {
   name: "Header",
   data() {
     return {
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       drawer: false,
       items: [
         { name: "首頁", icon: "mdi-home", href: "/posts" },
@@ -113,7 +113,7 @@ export default {
     },
     logout() {
       this.$router.push({ name: "Login" });
-      this.$cookies.remove("user_session");
+      this.$cookies.remove("user_permission");
     },
     login() {
       this.$router.push({ name: "Login" }).then(() => {

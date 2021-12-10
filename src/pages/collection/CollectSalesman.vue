@@ -104,7 +104,7 @@ export default {
       isData: false,
       dialogVisible: false,
       salesmanNum: null,
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       salesmen: [],
     };
   },

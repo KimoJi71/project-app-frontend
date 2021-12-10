@@ -131,6 +131,11 @@
       :num="postNum"
       @closeDialog="onCancel"
     />
+    <DialogLogin
+      :visible.sync="loginDialogVisible"
+      v-if="loginDialogVisible"
+      @closeDialog="onCancelDialogLogin"
+    />
     <Loading />
     <Snackbar />
   </div>
@@ -141,6 +146,7 @@ import Header from "@/components/Header.vue";
 import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
 import DialogReport from "@/components/DialogReport.vue";
+import DialogLogin from "@/components/DialogLogin.vue";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -150,12 +156,14 @@ export default {
     Snackbar,
     Loading,
     DialogReport,
+    DialogLogin,
   },
   data() {
     return {
+      loginDialogVisible: false,
       dialogVisible: false,
       postNum: null,
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       menuItems: [
         { title: "編輯", action: (postNum) => this.updatePost(postNum) },
         { title: "刪除", action: (postNum) => this.deletePost(postNum) },
@@ -177,6 +185,9 @@ export default {
     onCancel() {
       this.dialogVisible = false;
       this.postNum = null;
+    },
+    onCancelDialogLogin() {
+      this.loginDialogVisible = false;
     },
     goDetail(postNum) {
       this.$router.push({ name: "PostDetail", params: { postNum: postNum } });
@@ -210,36 +221,43 @@ export default {
     },
     // 文章按讚相關
     async onLike(postNum, isLike) {
-      if (isLike) {
-        try {
-          const res = await this.$api.post.cancelLikePost(postNum, this.memNum);
-          if (res.message === "成功取消貼文按讚") {
-            this.postsData.map((item) => {
-              if (item.postNum === postNum) {
-                item.isLike = false;
-                item.likeNumber -= 1;
-              }
-            });
+      if (this.memNum) {
+        if (isLike) {
+          try {
+            const res = await this.$api.post.cancelLikePost(
+              postNum,
+              this.memNum
+            );
+            if (res.message === "成功取消貼文按讚") {
+              this.postsData.map((item) => {
+                if (item.postNum === postNum) {
+                  item.isLike = false;
+                  item.likeNumber -= 1;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.post.likePost(postNum, {
+              memNum: this.memNum,
+            });
+            if (res.message === "成功為貼文按讚") {
+              this.postsData.map((item) => {
+                if (item.postNum === postNum) {
+                  item.isLike = true;
+                  item.likeNumber += 1;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.post.likePost(postNum, {
-            memNum: this.memNum,
-          });
-          if (res.message === "成功為貼文按讚") {
-            this.postsData.map((item) => {
-              if (item.postNum === postNum) {
-                item.isLike = true;
-                item.likeNumber += 1;
-              }
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkLikePost(post) {
@@ -257,37 +275,41 @@ export default {
     },
     // 文章收藏相關
     async onCollect(postNum, isCollect) {
-      if (isCollect) {
-        try {
-          const res = await this.$api.collection.cancelCollectPost(
-            postNum,
-            this.memNum
-          );
-          if (res.message === "成功取消貼文收藏") {
-            this.postsData.map((item) => {
-              if (item.postNum === postNum) {
-                item.isCollect = false;
-              }
-            });
+      if (this.memNum) {
+        if (isCollect) {
+          try {
+            const res = await this.$api.collection.cancelCollectPost(
+              postNum,
+              this.memNum
+            );
+            if (res.message === "成功取消貼文收藏") {
+              this.postsData.map((item) => {
+                if (item.postNum === postNum) {
+                  item.isCollect = false;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.collection.collectPost(postNum, {
+              memNum: this.memNum,
+            });
+            if (res.message === "成功收藏了貼文") {
+              this.postsData.map((item) => {
+                if (item.postNum === postNum) {
+                  item.isCollect = true;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.collection.collectPost(postNum, {
-            memNum: this.memNum,
-          });
-          if (res.message === "成功收藏了貼文") {
-            this.postsData.map((item) => {
-              if (item.postNum === postNum) {
-                item.isCollect = true;
-              }
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkCollectPost(post) {
@@ -300,10 +322,12 @@ export default {
       try {
         const res = await this.getPosts();
         this.postsData = res;
-        this.postsData.map((item) => {
-          this.checkLikePost(item);
-          this.checkCollectPost(item);
-        });
+        if (this.memNum) {
+          this.postsData.map((item) => {
+            this.checkLikePost(item);
+            this.checkCollectPost(item);
+          });
+        }
       } catch (err) {
         console.log(err);
       }

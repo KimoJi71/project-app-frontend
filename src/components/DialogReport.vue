@@ -80,7 +80,7 @@ export default {
   data() {
     return {
       valid: false,
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       content: "",
     };
   },

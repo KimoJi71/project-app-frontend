@@ -198,7 +198,7 @@ export default {
   },
   data() {
     return {
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       tableData: {
         proNum: parseInt(this.$route.params.proNum),
         proCompany: "",

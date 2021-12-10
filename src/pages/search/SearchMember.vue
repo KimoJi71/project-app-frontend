@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       isData: false,
-      memNum: parseInt(this.$cookies.get("user_session")),
+      memNum: parseInt(this.$cookies.get("user_permission")),
       membersData: [],
     };
   },

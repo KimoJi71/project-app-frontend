@@ -99,7 +99,7 @@ export default {
         });
         this.$router.push({ name: "HomePage" });
         // 將使用者記錄在cookie中，以保留登入狀態
-        this.$cookies.set("user_session", res.memNum);
+        this.$cookies.set("user_permission", res.memNum);
         this.setPopupStatus(true, { root: true });
         this.setPopupDetails(
           { popupMsgColor: "green", popupMsg: "登入成功" },

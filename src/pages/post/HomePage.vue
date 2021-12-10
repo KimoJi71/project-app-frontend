@@ -179,8 +179,12 @@ export default {
   },
   methods: {
     report(postNum) {
-      this.dialogVisible = true;
-      this.postNum = postNum;
+      if (this.memNum) {
+        this.dialogVisible = true;
+        this.postNum = postNum;
+      } else {
+        this.loginDialogVisible = true;
+      }
     },
     onCancel() {
       this.dialogVisible = false;

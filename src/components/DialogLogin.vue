@@ -52,7 +52,7 @@ export default {
       this.$emit("closeDialog");
     },
     goToLogin() {
-      this.$router.push({ name: "Login" });
+      this.$router.push({ name: "Register" });
     },
   },
 };

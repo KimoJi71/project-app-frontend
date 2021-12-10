@@ -178,6 +178,11 @@
       </div>
     </v-card>
 
+    <DialogLogin
+      :visible.sync="loginDialogVisible"
+      v-if="loginDialogVisible"
+      @closeDialog="onCancelDialogLogin"
+    />
     <BackBtn />
     <Loading />
   </div>
@@ -187,6 +192,7 @@
 import Header from "@/components/Header.vue";
 import Loading from "@/components/Loading.vue";
 import BackBtn from "@/components/BackBtn.vue";
+import DialogLogin from "@/components/DialogLogin.vue";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -195,9 +201,11 @@ export default {
     Header,
     Loading,
     BackBtn,
+    DialogLogin,
   },
   data() {
     return {
+      loginDialogVisible: false,
       memNum: parseInt(this.$cookies.get("user_permission")),
       tableData: {
         proNum: parseInt(this.$route.params.proNum),
@@ -227,6 +235,9 @@ export default {
   methods: {
     goBack() {
       this.$router.back(-1);
+    },
+    onCancelDialogLogin() {
+      this.loginDialogVisible = false;
     },
     // 商品按讚相關
     async onLike() {
@@ -260,6 +271,8 @@ export default {
             console.log(err);
           }
         }
+      } else {
+        this.loginDialogVisible = true;
       }
     },
     async checkLikeProduct() {
@@ -305,6 +318,8 @@ export default {
             console.log(err);
           }
         }
+      } else {
+        this.loginDialogVisible = true;
       }
     },
     async checkCollectProduct() {

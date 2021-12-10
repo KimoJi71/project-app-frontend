@@ -78,7 +78,7 @@
 
         <v-divider class="mt-4" />
 
-        <div class="mt-3">
+        <div :class="commentsData.length !== 0 ? 'mt-3 mb-2' : 'mt-3'">
           <v-badge
             :content="postData.likeNumber === 0 ? '0' : postData.likeNumber"
             color="red"
@@ -107,10 +107,10 @@
           >
         </div>
 
-        <v-divider class="mt-2" />
+        <v-divider v-if="memNum" />
 
         <!-- 留言區塊 -->
-        <v-row class="mt-4">
+        <v-row class="mt-4" v-if="memNum">
           <v-col class="d-flex" cols="12">
             <v-avatar class="mt-3" color="grey" size="40">
               <v-icon v-if="memPhoto === null" dark>mdi-account</v-icon>
@@ -257,6 +257,11 @@
       :num="num"
       @closeDialog="onCancel"
     />
+    <DialogLogin
+      :visible.sync="loginDialogVisible"
+      v-if="loginDialogVisible"
+      @closeDialog="onCancelDialogLogin"
+    />
     <Snackbar />
     <BackBtn />
     <Loading />
@@ -269,6 +274,7 @@ import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
 import BackBtn from "@/components/BackBtn.vue";
 import DialogReport from "@/components/DialogReport.vue";
+import DialogLogin from "@/components/DialogLogin.vue";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -279,9 +285,11 @@ export default {
     Loading,
     BackBtn,
     DialogReport,
+    DialogLogin,
   },
   data() {
     return {
+      loginDialogVisible: false,
       dialogVisible: false,
       dialogTitle: "",
       num: null,
@@ -337,18 +345,29 @@ export default {
   },
   methods: {
     reportPost(postNum) {
-      this.dialogVisible = true;
-      this.dialogTitle = "檢舉文章";
-      this.num = postNum;
+      if (this.memNum) {
+        this.dialogVisible = true;
+        this.dialogTitle = "檢舉文章";
+        this.num = postNum;
+      } else {
+        this.loginDialogVisible = true;
+      }
     },
     reportComment(commentNum) {
-      this.dialogVisible = true;
-      this.dialogTitle = "檢舉留言";
-      this.num = commentNum;
+      if (this.memNum) {
+        this.dialogVisible = true;
+        this.dialogTitle = "檢舉留言";
+        this.num = commentNum;
+      } else {
+        this.loginDialogVisible = true;
+      }
     },
     onCancel() {
       this.dialogVisible = false;
       this.num = null;
+    },
+    onCancelDialogLogin() {
+      this.loginDialogVisible = false;
     },
     async deletePost(postNum) {
       try {
@@ -434,31 +453,35 @@ export default {
     },
     // 文章按讚相關
     async onLikePost() {
-      if (this.postData.isLike) {
-        try {
-          const res = await this.$api.post.cancelLikePost(
-            this.postData.postNum,
-            this.memNum
-          );
-          if (res.message === "成功取消貼文按讚") {
-            this.postData.isLike = false;
-            this.postData.likeNumber -= 1;
+      if (this.memNum) {
+        if (this.postData.isLike) {
+          try {
+            const res = await this.$api.post.cancelLikePost(
+              this.postData.postNum,
+              this.memNum
+            );
+            if (res.message === "成功取消貼文按讚") {
+              this.postData.isLike = false;
+              this.postData.likeNumber -= 1;
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.post.likePost(this.postData.postNum, {
+              memNum: this.memNum,
+            });
+            if (res.message === "成功為貼文按讚") {
+              this.postData.isLike = true;
+              this.postData.likeNumber += 1;
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.post.likePost(this.postData.postNum, {
-            memNum: this.memNum,
-          });
-          if (res.message === "成功為貼文按讚") {
-            this.postData.isLike = true;
-            this.postData.likeNumber += 1;
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkLikePost() {
@@ -476,29 +499,34 @@ export default {
     },
     // 文章收藏相關
     async onCollect() {
-      if (this.postData.isCollect) {
-        try {
-          const res = await this.$api.collection.cancelCollectPost(
-            this.postData.postNum,
-            this.memNum
-          );
-          if (res.message === "成功取消貼文收藏")
-            this.postData.isCollect = false;
-        } catch (err) {
-          console.log(err);
+      if (this.memNum) {
+        if (this.postData.isCollect) {
+          try {
+            const res = await this.$api.collection.cancelCollectPost(
+              this.postData.postNum,
+              this.memNum
+            );
+            if (res.message === "成功取消貼文收藏")
+              this.postData.isCollect = false;
+          } catch (err) {
+            console.log(err);
+          }
+        } else {
+          try {
+            const res = await this.$api.collection.collectPost(
+              this.postData.postNum,
+              {
+                memNum: this.memNum,
+              }
+            );
+            if (res.message === "成功收藏了貼文")
+              this.postData.isCollect = true;
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.collection.collectPost(
-            this.postData.postNum,
-            {
-              memNum: this.memNum,
-            }
-          );
-          if (res.message === "成功收藏了貼文") this.postData.isCollect = true;
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkCollectPost() {
@@ -510,39 +538,43 @@ export default {
     },
     // 留言按讚相關
     async onLikeComment(commentNum, isLike) {
-      if (isLike) {
-        try {
-          const res = await this.$api.comment.cancelLikeComment(
-            commentNum,
-            this.memNum
-          );
-          if (res.message === "成功取消留言按讚") {
-            this.commentsData.map((item) => {
-              if (item.commentNum === commentNum) {
-                item.isLike = false;
-                item.likeNumber -= 1;
-              }
-            });
+      if (this.memNum) {
+        if (isLike) {
+          try {
+            const res = await this.$api.comment.cancelLikeComment(
+              commentNum,
+              this.memNum
+            );
+            if (res.message === "成功取消留言按讚") {
+              this.commentsData.map((item) => {
+                if (item.commentNum === commentNum) {
+                  item.isLike = false;
+                  item.likeNumber -= 1;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.comment.likeComment(commentNum, {
+              memNum: this.memNum,
+            });
+            if (res.message === "成功為留言按讚") {
+              this.commentsData.map((item) => {
+                if (item.commentNum === commentNum) {
+                  item.isLike = true;
+                  item.likeNumber += 1;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.comment.likeComment(commentNum, {
-            memNum: this.memNum,
-          });
-          if (res.message === "成功為留言按讚") {
-            this.commentsData.map((item) => {
-              if (item.commentNum === commentNum) {
-                item.isLike = true;
-                item.likeNumber += 1;
-              }
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkLikeComment(comment) {
@@ -562,8 +594,10 @@ export default {
           return item.postNum === this.postData.postNum;
         });
         this.postData = data[0];
-        this.checkLikePost();
-        this.checkCollectPost();
+        if (this.memNum) {
+          this.checkLikePost();
+          this.checkCollectPost();
+        }
       } catch (err) {
         console.log(err);
       }
@@ -574,9 +608,11 @@ export default {
         this.setLoadingMsg("Loading...", { root: true });
         await this.getComments(this.postData.postNum);
         this.commentsData = this.comments;
-        this.commentsData.map((item) => {
-          this.checkLikeComment(item);
-        });
+        if (this.memNum) {
+          this.commentsData.map((item) => {
+            this.checkLikeComment(item);
+          });
+        }
         this.setLoadingStatus(null, { root: true });
         this.setLoadingMsg("", { root: true });
       } catch (err) {
@@ -600,7 +636,9 @@ export default {
     this.getPostsInfo();
     // 取得留言
     this.getCommentsInfo();
-    this.memPhoto = this.profile.data.memPhoto;
+    if (this.memNum) {
+      this.memPhoto = this.profile.data.memPhoto;
+    }
   },
 };
 </script>

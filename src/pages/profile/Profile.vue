@@ -261,6 +261,11 @@
       :num="num"
       @closeDialog="onCancel"
     />
+    <DialogLogin
+      :visible.sync="loginDialogVisible"
+      v-if="loginDialogVisible"
+      @closeDialog="onCancelDialogLogin"
+    />
     <Loading />
     <Snackbar />
   </div>
@@ -271,6 +276,7 @@ import Header from "@/components/Header.vue";
 import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
 import DialogReport from "@/components/DialogReport.vue";
+import DialogLogin from "@/components/DialogLogin.vue";
 import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
@@ -280,9 +286,11 @@ export default {
     Snackbar,
     Loading,
     DialogReport,
+    DialogLogin,
   },
   data() {
     return {
+      loginDialogVisible: false,
       dialogVisible: false,
       dialogTitle: "",
       num: null,
@@ -325,18 +333,29 @@ export default {
   },
   methods: {
     reportSalesman(salesmanNum) {
-      this.dialogVisible = true;
-      this.dialogTitle = "檢舉業務員";
-      this.num = salesmanNum;
+      if (this.$cookies.get("user_permission")) {
+        this.dialogVisible = true;
+        this.dialogTitle = "檢舉業務員";
+        this.num = salesmanNum;
+      } else {
+        this.loginDialogVisible = true;
+      }
     },
     reportPost(postNum) {
-      this.dialogVisible = true;
-      this.dialogTitle = "檢舉文章";
-      this.num = postNum;
+      if (this.$cookies.get("user_permission")) {
+        this.dialogVisible = true;
+        this.dialogTitle = "檢舉文章";
+        this.num = postNum;
+      } else {
+        this.loginDialogVisible = true;
+      }
     },
     onCancel() {
       this.dialogVisible = false;
       this.num = null;
+    },
+    onCancelDialogLogin() {
+      this.loginDialogVisible = false;
     },
     goDetail(postNum) {
       this.$router.push({ name: "PostDetail", params: { postNum: postNum } });
@@ -364,39 +383,43 @@ export default {
     },
     // 文章按讚相關
     async onLikePost(postNum, isLike) {
-      if (isLike) {
-        try {
-          const res = await this.$api.post.cancelLikePost(
-            postNum,
-            parseInt(this.$cookies.get("user_permission"))
-          );
-          if (res.message === "成功取消貼文按讚") {
-            this.postsData.map((item) => {
-              if (item.postNum === postNum) {
-                item.isLike = false;
-                item.likeNumber -= 1;
-              }
-            });
+      if (this.$cookies.get("user_permission")) {
+        if (isLike) {
+          try {
+            const res = await this.$api.post.cancelLikePost(
+              postNum,
+              parseInt(this.$cookies.get("user_permission"))
+            );
+            if (res.message === "成功取消貼文按讚") {
+              this.postsData.map((item) => {
+                if (item.postNum === postNum) {
+                  item.isLike = false;
+                  item.likeNumber -= 1;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.post.likePost(postNum, {
+              memNum: parseInt(this.$cookies.get("user_permission")),
+            });
+            if (res.message === "成功為貼文按讚") {
+              this.postsData.map((item) => {
+                if (item.postNum === postNum) {
+                  item.isLike = true;
+                  item.likeNumber += 1;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.post.likePost(postNum, {
-            memNum: parseInt(this.$cookies.get("user_permission")),
-          });
-          if (res.message === "成功為貼文按讚") {
-            this.postsData.map((item) => {
-              if (item.postNum === postNum) {
-                item.isLike = true;
-                item.likeNumber += 1;
-              }
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkLikePost(post) {
@@ -414,37 +437,41 @@ export default {
     },
     // 文章收藏相關
     async onCollectPost(postNum, isCollect) {
-      if (isCollect) {
-        try {
-          const res = await this.$api.collection.cancelCollectPost(
-            postNum,
-            parseInt(this.$cookies.get("user_permission"))
-          );
-          if (res.message === "成功取消貼文收藏") {
-            this.postsData.map((item) => {
-              if (item.postNum === postNum) {
-                item.isCollect = false;
-              }
-            });
+      if (this.$cookies.get("user_permission")) {
+        if (isCollect) {
+          try {
+            const res = await this.$api.collection.cancelCollectPost(
+              postNum,
+              parseInt(this.$cookies.get("user_permission"))
+            );
+            if (res.message === "成功取消貼文收藏") {
+              this.postsData.map((item) => {
+                if (item.postNum === postNum) {
+                  item.isCollect = false;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.collection.collectPost(postNum, {
+              memNum: parseInt(this.$cookies.get("user_permission")),
+            });
+            if (res.message === "成功收藏了貼文") {
+              this.postsData.map((item) => {
+                if (item.postNum === postNum) {
+                  item.isCollect = true;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.collection.collectPost(postNum, {
-            memNum: parseInt(this.$cookies.get("user_permission")),
-          });
-          if (res.message === "成功收藏了貼文") {
-            this.postsData.map((item) => {
-              if (item.postNum === postNum) {
-                item.isCollect = true;
-              }
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkCollectPost(post) {
@@ -462,10 +489,12 @@ export default {
           return item.memNum === this.memNum;
         });
         this.postsData = data;
-        this.postsData.map((item) => {
-          this.checkLikePost(item);
-          this.checkCollectPost(item);
-        });
+        if (this.$cookies.get("user_permission")) {
+          this.postsData.map((item) => {
+            this.checkLikePost(item);
+            this.checkCollectPost(item);
+          });
+        }
       } catch (err) {
         console.log(err);
       }
@@ -493,8 +522,10 @@ export default {
             .join(" / ");
           this.profileItem[2].content = this.profileInfo.memPhone;
           this.profileItem[3].content = this.profileInfo.memLineID;
-          this.checkLikeSalesman();
-          this.checkCollectSalesman();
+          if (this.$cookies.get("user_permission")) {
+            this.checkLikeSalesman();
+            this.checkCollectSalesman();
+          }
         }
       } catch (err) {
         console.log(err);
@@ -502,31 +533,35 @@ export default {
     },
     // 業務員按讚相關
     async onLikeSalesman(isLike) {
-      if (isLike) {
-        try {
-          const res = await this.$api.member.cancelLikeSalesman(
-            this.memNum,
-            parseInt(this.$cookies.get("user_permission"))
-          );
-          if (res.message === "成功取消業務員按讚") {
-            this.profileInfo.isLike = false;
-            this.profileInfo.likeNum -= 1;
+      if (this.$cookies.get("user_permission")) {
+        if (isLike) {
+          try {
+            const res = await this.$api.member.cancelLikeSalesman(
+              this.memNum,
+              parseInt(this.$cookies.get("user_permission"))
+            );
+            if (res.message === "成功取消業務員按讚") {
+              this.profileInfo.isLike = false;
+              this.profileInfo.likeNum -= 1;
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.member.likeSalesman(this.memNum, {
+              memNum: parseInt(this.$cookies.get("user_permission")),
+            });
+            if (res.message === "成功為業務員按讚") {
+              this.profileInfo.isLike = true;
+              this.profileInfo.likeNum += 1;
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.member.likeSalesman(this.memNum, {
-            memNum: parseInt(this.$cookies.get("user_permission")),
-          });
-          if (res.message === "成功為業務員按讚") {
-            this.profileInfo.isLike = true;
-            this.profileInfo.likeNum += 1;
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkLikeSalesman() {
@@ -544,32 +579,36 @@ export default {
     },
     // 業務員收藏相關
     async onCollectSalesman() {
-      if (this.profileInfo.isCollect) {
-        try {
-          const res = await this.$api.collection.cancelCollectSalesman(
-            this.profileInfo.memNum,
-            parseInt(this.$cookies.get("user_permission"))
-          );
-          if (res.message === "成功取消業務員收藏") {
-            this.profileInfo.isCollect = false;
+      if (this.$cookies.get("user_permission")) {
+        if (this.profileInfo.isCollect) {
+          try {
+            const res = await this.$api.collection.cancelCollectSalesman(
+              this.profileInfo.memNum,
+              parseInt(this.$cookies.get("user_permission"))
+            );
+            if (res.message === "成功取消業務員收藏") {
+              this.profileInfo.isCollect = false;
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.collection.collectSalesman(
+              this.profileInfo.memNum,
+              {
+                memNum: parseInt(this.$cookies.get("user_permission")),
+              }
+            );
+            if (res.message === "成功收藏了業務員") {
+              this.profileInfo.isCollect = true;
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.collection.collectSalesman(
-            this.profileInfo.memNum,
-            {
-              memNum: parseInt(this.$cookies.get("user_permission")),
-            }
-          );
-          if (res.message === "成功收藏了業務員") {
-            this.profileInfo.isCollect = true;
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkCollectSalesman() {

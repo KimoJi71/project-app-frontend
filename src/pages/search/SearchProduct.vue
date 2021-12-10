@@ -97,6 +97,11 @@
       </div>
     </v-card>
 
+    <DialogLogin
+      :visible.sync="loginDialogVisible"
+      v-if="loginDialogVisible"
+      @closeDialog="onCancelDialogLogin"
+    />
     <Loading />
   </div>
 </template>
@@ -105,6 +110,7 @@
 import Header from "@/components/Header.vue";
 import SearchResBtn from "@/components/search/SearchResBtn.vue";
 import Loading from "@/components/Loading.vue";
+import DialogLogin from "@/components/DialogLogin.vue";
 import { mapState, mapActions } from "vuex";
 
 export default {
@@ -113,10 +119,12 @@ export default {
     Header,
     SearchResBtn,
     Loading,
+    DialogLogin,
   },
   data() {
     return {
       isData: false,
+      loginDialogVisible: false,
       screenWidth: document.body.clientWidth,
       memNum: parseInt(this.$cookies.get("user_permission")),
       productsData: [],
@@ -128,44 +136,51 @@ export default {
     }),
   },
   methods: {
+    onCancelDialogLogin() {
+      this.loginDialogVisible = false;
+    },
     getDetail(proNum) {
       this.$router.push({ name: "ProductDetail", params: { proNum: proNum } });
     },
     // 商品按讚相關
     async onLike(proNum, isLike) {
-      if (isLike) {
-        try {
-          const res = await this.$api.product.cancelLikeProduct(
-            proNum,
-            this.memNum
-          );
-          if (res.message === "成功取消商品按讚") {
-            this.productsData.map((item) => {
-              if (item.proNum === proNum) {
-                item.isLike = false;
-                item.likeNumber -= 1;
-              }
-            });
+      if (this.memNum) {
+        if (isLike) {
+          try {
+            const res = await this.$api.product.cancelLikeProduct(
+              proNum,
+              this.memNum
+            );
+            if (res.message === "成功取消商品按讚") {
+              this.productsData.map((item) => {
+                if (item.proNum === proNum) {
+                  item.isLike = false;
+                  item.likeNumber -= 1;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.product.likeProduct(proNum, {
+              memNum: this.memNum,
+            });
+            if (res.message === "成功為商品按讚") {
+              this.productsData.map((item) => {
+                if (item.proNum === proNum) {
+                  item.isLike = true;
+                  item.likeNumber += 1;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.product.likeProduct(proNum, {
-            memNum: this.memNum,
-          });
-          if (res.message === "成功為商品按讚") {
-            this.productsData.map((item) => {
-              if (item.proNum === proNum) {
-                item.isLike = true;
-                item.likeNumber += 1;
-              }
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkLikeProduct(product) {
@@ -183,37 +198,41 @@ export default {
     },
     // 商品收藏相關
     async onCollect(proNum, isCollect) {
-      if (isCollect) {
-        try {
-          const res = await this.$api.collection.cancelCollectProduct(
-            proNum,
-            this.memNum
-          );
-          if (res.message === "成功取消商品收藏") {
-            this.productsData.map((item) => {
-              if (item.proNum === proNum) {
-                item.isCollect = false;
-              }
-            });
+      if (this.memNum) {
+        if (isCollect) {
+          try {
+            const res = await this.$api.collection.cancelCollectProduct(
+              proNum,
+              this.memNum
+            );
+            if (res.message === "成功取消商品收藏") {
+              this.productsData.map((item) => {
+                if (item.proNum === proNum) {
+                  item.isCollect = false;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          try {
+            const res = await this.$api.collection.collectProduct(proNum, {
+              memNum: this.memNum,
+            });
+            if (res.message === "成功收藏了商品") {
+              this.productsData.map((item) => {
+                if (item.proNum === proNum) {
+                  item.isCollect = true;
+                }
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
       } else {
-        try {
-          const res = await this.$api.collection.collectProduct(proNum, {
-            memNum: this.memNum,
-          });
-          if (res.message === "成功收藏了商品") {
-            this.productsData.map((item) => {
-              if (item.proNum === proNum) {
-                item.isCollect = true;
-              }
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        this.loginDialogVisible = true;
       }
     },
     async checkCollectProduct(product) {
@@ -234,10 +253,12 @@ export default {
       this.productsData = this.products;
       if (this.productsData.length === 0) this.isData = true;
       else {
-        this.productsData.map((item) => {
-          this.checkLikeProduct(item);
-          this.checkCollectProduct(item);
-        });
+        if (this.memNum) {
+          this.productsData.map((item) => {
+            this.checkLikeProduct(item);
+            this.checkCollectProduct(item);
+          });
+        }
       }
     } catch (err) {
       console.log(err);

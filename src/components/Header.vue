@@ -90,10 +90,10 @@ export default {
       memNum: parseInt(this.$cookies.get("user_permission")),
       drawer: false,
       items: [
-        { name: "首頁", icon: "mdi-home", href: "/posts" },
+        { name: "貼文", icon: "mdi-note", href: "/posts" },
         { name: "保險商品", icon: "mdi-view-dashboard", href: "/products" },
-        // { name: "排行榜", icon: "mdi-star", href: "/rank" },
-        // { name: "幫助中心", icon: "mdi-lightbulb", href: "/help" },
+        { name: "排行榜", icon: "mdi-star", href: "/rank" },
+        { name: "幫助中心", icon: "mdi-lightbulb", href: "/FAQ" },
       ],
       memName: "",
       memPhoto: null,

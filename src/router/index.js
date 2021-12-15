@@ -149,6 +149,24 @@ const routes = [
     },
   },
   {
+    name: "Rank",
+    path: "/rank",
+    component: () => import("@/pages/rank/Rank"),
+    meta: {
+      title: "排行榜",
+      keepAlive: false,
+    },
+  },
+  {
+    name: "FAQ",
+    path: "/FAQ",
+    component: () => import("@/pages/FAQ/FAQ"),
+    meta: {
+      title: "幫助中心",
+      keepAlive: false,
+    },
+  },
+  {
     path: "*",
     redirect: { name: "Products" },
   },

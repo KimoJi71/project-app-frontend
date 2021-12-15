@@ -6,6 +6,8 @@ import product from "./product";
 import member from "./member";
 import image from "./image";
 import collection from "./collection";
+import rank from "./rank";
+import FAQ from "./FAQ";
 
 export default {
   auth,
@@ -16,4 +18,6 @@ export default {
   member,
   image,
   collection,
+  rank,
+  FAQ,
 };

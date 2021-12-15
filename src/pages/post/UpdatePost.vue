@@ -7,7 +7,7 @@
       <v-divider class="ml-4" />
       <v-card-text>
         <v-list-item-avatar color="grey">
-          <v-icon v-if="postData.memName === null" dark>mdi-account</v-icon>
+          <v-icon v-if="postData.memPhoto === null" dark>mdi-account</v-icon>
           <v-img
             v-else
             cover

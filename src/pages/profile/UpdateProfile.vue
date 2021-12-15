@@ -344,7 +344,7 @@ export default {
           memName: this.profileInfo.memName,
           memIntro: this.profileInfo.memIntro,
           memGender: this.profileInfo.memGender,
-          memBirth: this.profileInfo.memBirth,
+          memBirth: this.profileInfo.memBirth ? this.profileInfo.memBirth : "",
           memCompany: this.profileInfo.memCompany,
           companyContact: this.profileInfo.companyContact
             ? this.profileInfo.companyContact
@@ -379,11 +379,13 @@ export default {
         try {
           await this.getProfile(this.memNum);
           this.profileInfo = this.profile.data;
-          this.profileInfo.memBirth = this.$moment(
-            this.profileInfo.memBirth
-          ).format("YYYY-MM-DD");
-          this.memPhoto =
-            "http://localhost:3000/images\\" + this.profileInfo.memPhoto;
+          this.profileInfo.memBirth = this.profileInfo.memBirth
+            ? this.$moment(this.profileInfo.memBirth).format("YYYY-MM-DD")
+            : "";
+          if (this.profileInfo.memPhoto !== null) {
+            this.memPhoto =
+              "http://localhost:3000/images\\" + this.profileInfo.memPhoto;
+          }
           if (this.profileInfo.memIdentify === 1) {
             this.profileInfo.memService =
               this.profileInfo.memService.split(",");

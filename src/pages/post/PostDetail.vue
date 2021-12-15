@@ -107,7 +107,7 @@
           >
         </div>
 
-        <v-divider v-if="memNum" />
+        <v-divider class="mt-2" v-if="memNum" />
 
         <!-- 留言區塊 -->
         <v-row class="mt-4" v-if="memNum">
@@ -207,8 +207,9 @@
                   class="mr-4"
                   append-icon="mdi-pencil"
                   no-resize
-                  rows="2"
+                  rows="4"
                   outlined
+                  rounded
                   v-model="comment.commentContent"
                   @click:append="
                     updateComment(comment.commentNum, comment.commentContent)
@@ -623,6 +624,7 @@ export default {
       getPosts: "post/getPosts",
       getComments: "comment/getComments",
       getCollectPost: "collection/getCollectPost",
+      getProfile: "member/getProfile",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
@@ -637,6 +639,7 @@ export default {
     // 取得留言
     this.getCommentsInfo();
     if (this.memNum) {
+      this.getProfile(this.memNum);
       this.memPhoto = this.profile.data.memPhoto;
     }
   },

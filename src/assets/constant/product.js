@@ -23,11 +23,6 @@ const proSmallItem = [
   "健康管理",
 ];
 
-// 保險特色
-// const proFeature = [
-
-// ]
-
 // 保障內容
 const proContent = [
   "病房費用",

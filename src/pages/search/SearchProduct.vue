@@ -23,6 +23,7 @@
       :key="product.proNum"
     >
       <v-card-title>
+        <v-chip class="mr-2" v-if="product.proStatus === '停售'">停售</v-chip>
         {{ product.proCompany }} |
         {{
           product.proName.match(product.proCompany)
@@ -82,7 +83,12 @@
             }}</v-icon>
           </v-btn>
         </v-badge>
-        <v-btn class="mb-2" icon>
+        <v-btn
+          :id="`shareBtn${product.proNum}`"
+          class="mb-2"
+          icon
+          @click="copyLink(product.proNum)"
+        >
           <v-icon color="success">mdi-share</v-icon>
         </v-btn>
         <v-btn
@@ -103,26 +109,30 @@
       @closeDialog="onCancelDialogLogin"
     />
     <Loading />
+    <Snackbar />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import Snackbar from "@/components/Snackbar.vue";
 import SearchResBtn from "@/components/search/SearchResBtn.vue";
 import Loading from "@/components/Loading.vue";
 import DialogLogin from "@/components/DialogLogin.vue";
-import { mapState, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "SearchProduct",
   components: {
     Header,
+    Snackbar,
     SearchResBtn,
     Loading,
     DialogLogin,
   },
   data() {
     return {
+      link: "",
       isData: false,
       loginDialogVisible: false,
       screenWidth: document.body.clientWidth,
@@ -132,10 +142,42 @@ export default {
   },
   computed: {
     ...mapState({
+      popupStatus: (state) => state.popupStatus,
       products: (state) => state.search.products,
     }),
   },
   methods: {
+    // 分享
+    // 待修正：需要點擊兩次才會生效 而且點擊第二次成功後再點擊會疊加成功方法
+    copyLink(proNum) {
+      let shareBtn = document.querySelector(`#shareBtn${proNum}`);
+      shareBtn.addEventListener("click", () => {
+        let dummy = document.createElement("input");
+        this.link = `http://localhost:8080/products/detail/${proNum}`;
+        document.body.appendChild(dummy);
+        dummy.value = this.link;
+        dummy.select();
+
+        try {
+          let successful = document.execCommand("copy");
+          if (successful) {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "green", popupMsg: "連結已複製" },
+              { root: true }
+            );
+          } else {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "red", popupMsg: "連結複製失敗" },
+              { root: true }
+            );
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      });
+    },
     onCancelDialogLogin() {
       this.loginDialogVisible = false;
     },
@@ -244,6 +286,10 @@ export default {
     ...mapActions({
       getSearchProduct: "search/getSearchProduct",
       getCollectProduct: "collection/getCollectProduct",
+    }),
+    ...mapMutations({
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
     }),
   },
   async mounted() {

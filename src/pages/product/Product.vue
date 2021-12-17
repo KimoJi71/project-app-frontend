@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 <template>
   <div id="bkg">
     <Header />
@@ -44,13 +43,13 @@
               v-model="params.kind"
             />
             <v-autocomplete
-              label="保險種類"
+              label="保險期間"
               clearable
               chips
               dense
               solo
-              :items="proSmallItem"
-              v-model="params.smallItem"
+              :items="proPeriod"
+              v-model="params.period"
             />
             <v-autocomplete
               label="保障內容"
@@ -77,7 +76,7 @@
       </v-col>
 
       <v-col cols="12" md="8">
-        <v-row justify="center">
+        <!-- <v-row justify="center">
           <v-col cols="12" sm="4" md="6">
             <v-btn color="primary lighten-1" tile block depressed>最新</v-btn>
           </v-col>
@@ -86,12 +85,15 @@
               >最多用戶收藏</v-btn
             >
           </v-col>
-        </v-row>
+        </v-row> -->
         <!-- 商品資料render -->
         <v-row justify="center" v-for="data in proData" :key="data.proNum">
           <v-col cols="12" md="12">
             <v-card elevation="3">
               <v-card-title>
+                <v-chip class="mr-2" v-if="data.proStatus === '停售'"
+                  >停售</v-chip
+                >
                 {{ data.proCompany }} |
                 {{
                   data.proName.match(data.proCompany)
@@ -100,7 +102,12 @@
                 }}
               </v-card-title>
               <v-card-text>
-                <v-chip color="red" label outlined>
+                <v-chip
+                  color="red"
+                  label
+                  outlined
+                  v-if="data.proBigItem !== ''"
+                >
                   {{
                     data.proBigItem
                       .split(",")
@@ -108,7 +115,13 @@
                       .join("、")
                   }}
                 </v-chip>
-                <v-chip class="ml-3" color="success" label outlined>
+                <v-chip
+                  class="ml-3"
+                  color="success"
+                  label
+                  outlined
+                  v-if="data.proKind !== ''"
+                >
                   {{ data.proKind }}
                 </v-chip>
                 <v-chip
@@ -118,7 +131,12 @@
                   outlined
                   v-if="data.proPeriod !== ''"
                 >
-                  {{ data.proPeriod }}
+                  {{
+                    data.proPeriod
+                      .split(",")
+                      .map((item) => item)
+                      .join("、")
+                  }}
                 </v-chip>
                 <v-btn
                   text
@@ -153,7 +171,12 @@
                     }}</v-icon>
                   </v-btn>
                 </v-badge>
-                <v-btn class="mb-2" icon>
+                <v-btn
+                  :id="`shareBtn${data.proNum}`"
+                  class="mb-2"
+                  icon
+                  @click="copyLink(data.proNum)"
+                >
                   <v-icon color="success">mdi-share</v-icon>
                 </v-btn>
                 <v-btn
@@ -187,18 +210,20 @@
       @closeDialog="onCancelDialogLogin"
     />
     <Loading />
+    <Snackbar />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
 import DialogLogin from "@/components/DialogLogin.vue";
 import {
   proCompany,
   proBigItem,
   proKind,
-  proSmallItem,
+  proPeriod,
   proContent,
 } from "@/assets/constant/product.js";
 import { mapState, mapActions, mapMutations } from "vuex";
@@ -207,11 +232,13 @@ export default {
   name: "Product",
   components: {
     Header,
+    Snackbar,
     Loading,
     DialogLogin,
   },
   data() {
     return {
+      link: "",
       screenWidth: document.body.clientWidth,
       memNum: parseInt(this.$cookies.get("user_permission")),
       show: false,
@@ -221,13 +248,13 @@ export default {
       proCompany,
       proBigItem,
       proKind,
-      proSmallItem,
+      proPeriod,
       proContent,
       params: {
         company: "",
         bigItem: "",
         kind: "",
-        smallItem: "",
+        period: "",
         content: "",
       },
       proData: [],
@@ -236,10 +263,42 @@ export default {
   },
   computed: {
     ...mapState({
+      popupStatus: (state) => state.popupStatus,
       productInfo: (state) => state.product.productInfo,
     }),
   },
   methods: {
+    // 分享
+    // 待修正：需要點擊兩次才會生效 而且點擊第二次成功後再點擊會疊加成功方法
+    copyLink(proNum) {
+      let shareBtn = document.querySelector(`#shareBtn${proNum}`);
+      shareBtn.addEventListener("click", () => {
+        let dummy = document.createElement("input");
+        this.link = `http://localhost:8080/products/detail/${proNum}`;
+        document.body.appendChild(dummy);
+        dummy.value = this.link;
+        dummy.select();
+
+        try {
+          let successful = document.execCommand("copy");
+          if (successful) {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "green", popupMsg: "連結已複製" },
+              { root: true }
+            );
+          } else {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "red", popupMsg: "連結複製失敗" },
+              { root: true }
+            );
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      });
+    },
     onCancelDialogLogin() {
       this.loginDialogVisible = false;
     },
@@ -373,6 +432,8 @@ export default {
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
       setLoadingMsg: "setLoadingMsg",
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
     }),
   },
   beforeRouteLeave(to, from, next) {

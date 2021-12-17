@@ -82,7 +82,12 @@
             }}</v-icon>
           </v-btn>
         </v-badge>
-        <v-btn class="mb-2" icon>
+        <v-btn
+          :id="`shareBtn${product.proNum}`"
+          class="mb-2"
+          icon
+          @click="copyLink(product.proNum)"
+        >
           <v-icon color="success">mdi-share</v-icon>
         </v-btn>
         <v-btn class="mb-2" icon @click="cancelCollect(product.proNum)">
@@ -126,6 +131,37 @@ export default {
     }),
   },
   methods: {
+    // 分享
+    // 待修正：需要點擊兩次才會生效 而且點擊第二次成功後再點擊會疊加成功方法
+    copyLink(proNum) {
+      let shareBtn = document.querySelector(`#shareBtn${proNum}`);
+      shareBtn.addEventListener("click", () => {
+        let dummy = document.createElement("input");
+        this.link = `http://localhost:8080/products/detail/${proNum}`;
+        document.body.appendChild(dummy);
+        dummy.value = this.link;
+        dummy.select();
+
+        try {
+          let successful = document.execCommand("copy");
+          if (successful) {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "green", popupMsg: "連結已複製" },
+              { root: true }
+            );
+          } else {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "red", popupMsg: "連結複製失敗" },
+              { root: true }
+            );
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      });
+    },
     getDetail(proNum) {
       this.$router.push({ name: "ProductDetail", params: { proNum: proNum } });
     },

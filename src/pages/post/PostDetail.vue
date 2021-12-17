@@ -94,7 +94,7 @@
           <v-btn icon @click="reportPost(postData.postNum)">
             <v-icon color="warning">mdi-alert</v-icon>
           </v-btn>
-          <v-btn icon>
+          <v-btn id="shareBtn" icon @click="copyLink()">
             <v-icon color="success">mdi-share</v-icon>
           </v-btn>
           <v-btn icon @click="onCollect()">
@@ -345,6 +345,38 @@ export default {
     }),
   },
   methods: {
+    // 分享
+    // 待修正：需要點擊兩次才會生效 而且點擊第二次成功後再點擊會疊加成功方法
+    copyLink() {
+      let shareBtn = document.querySelector(`#shareBtn`);
+      shareBtn.addEventListener("click", () => {
+        let dummy = document.createElement("input");
+        let link = window.location.href;
+        document.body.appendChild(dummy);
+        dummy.value = link;
+        dummy.select();
+
+        try {
+          let successful = document.execCommand("copy");
+          if (successful) {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "green", popupMsg: "連結已複製" },
+              { root: true }
+            );
+          } else {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "red", popupMsg: "連結複製失敗" },
+              { root: true }
+            );
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      });
+    },
+    // 檢舉
     reportPost(postNum) {
       if (this.memNum) {
         this.dialogVisible = true;
@@ -639,8 +671,10 @@ export default {
     // 取得留言
     this.getCommentsInfo();
     if (this.memNum) {
-      this.getProfile(this.memNum);
-      this.memPhoto = this.profile.data.memPhoto;
+      const res = this.$api.member.getProfile(this.memNum);
+      res.then((result) => {
+        this.memPhoto = result.data.memPhoto;
+      });
     }
   },
 };

@@ -86,7 +86,11 @@
           <v-btn icon @click="report(post.postNum)">
             <v-icon color="warning">mdi-alert</v-icon>
           </v-btn>
-          <v-btn icon>
+          <v-btn
+            :id="`shareBtn${post.postNum}`"
+            icon
+            @click="copyLink(post.postNum)"
+          >
             <v-icon color="success">mdi-share</v-icon>
           </v-btn>
           <v-btn icon @click="cancelCollect(post.postNum)">
@@ -130,6 +134,7 @@ export default {
   },
   data() {
     return {
+      link: "",
       isData: false,
       dialogVisible: false,
       postNum: null,
@@ -144,6 +149,38 @@ export default {
     }),
   },
   methods: {
+    // 分享
+    // 待修正：需要點擊兩次才會生效 而且點擊第二次成功後再點擊會疊加成功方法
+    copyLink(postNum) {
+      let shareBtn = document.querySelector(`#shareBtn${postNum}`);
+      shareBtn.addEventListener("click", () => {
+        let dummy = document.createElement("input");
+        this.link = `http://localhost:8080/posts/detail/${postNum}`;
+        document.body.appendChild(dummy);
+        dummy.value = this.link;
+        dummy.select();
+
+        try {
+          let successful = document.execCommand("copy");
+          if (successful) {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "green", popupMsg: "連結已複製" },
+              { root: true }
+            );
+          } else {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "red", popupMsg: "連結複製失敗" },
+              { root: true }
+            );
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      });
+    },
+    // 檢舉
     report(postNum) {
       this.dialogVisible = true;
       this.postNum = postNum;

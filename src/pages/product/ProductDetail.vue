@@ -12,7 +12,7 @@
         }}</v-card-title
       >
       <v-card-text>
-        <v-chip color="red" label outlined v-if="tableData.proBigItem">
+        <v-chip color="red" label outlined v-if="tableData.proBigItem !== ''">
           {{
             tableData.proBigItem
               .split(",")
@@ -20,7 +20,13 @@
               .join("、")
           }}
         </v-chip>
-        <v-chip class="ml-3" color="success" label outlined>
+        <v-chip
+          class="ml-3"
+          color="success"
+          label
+          outlined
+          v-if="tableData.proKind !== ''"
+        >
           {{ tableData.proKind }}
         </v-chip>
         <v-chip
@@ -28,27 +34,17 @@
           color="blue"
           label
           outlined
-          v-if="tableData.proPeriod"
+          v-if="tableData.proPeriod !== ''"
         >
-          {{ tableData.proPeriod }}
+          {{
+            tableData.proPeriod
+              .split(",")
+              .map((item) => item)
+              .join("、")
+          }}
         </v-chip>
 
         <v-list>
-          <v-list-item class="pa-0 mt-4" v-if="tableData.proSmallItem">
-            <v-list-item-content>
-              <v-list-item-title class="font-weight-bold">
-                <v-icon class="mr-2" color="black">mdi-label</v-icon>
-                商品種類
-              </v-list-item-title>
-              <span class="mt-3 pl-9">{{
-                tableData.proSmallItem
-                  .split(",")
-                  .map((item) => item)
-                  .join(" / ")
-              }}</span>
-            </v-list-item-content>
-          </v-list-item>
-
           <v-list-item class="pa-0" v-if="tableData.proRemark">
             <v-list-item-content>
               <v-list-item-title class="font-weight-bold">
@@ -113,7 +109,7 @@
                 附加檔案
               </v-list-item-title>
               <div class="mt-3 ml-9">
-                <v-tooltip bottom>
+                <v-tooltip bottom v-if="tableData.proDM">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
                       color="blue"
@@ -132,7 +128,7 @@
                 <v-tooltip bottom v-if="tableData.proTerms">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                      class="ml-5"
+                      :class="tableData.proDM ? 'ml-5' : ''"
                       color="green"
                       fab
                       outlined
@@ -167,7 +163,7 @@
             }}</v-icon>
           </v-btn>
         </v-badge>
-        <v-btn class="mb-2" icon>
+        <v-btn id="shareBtn" class="mb-2" icon @click="copyLink">
           <v-icon color="success">mdi-share</v-icon>
         </v-btn>
         <v-btn class="mb-2" icon @click="onCollect()">
@@ -185,11 +181,13 @@
     />
     <BackBtn />
     <Loading />
+    <Snackbar />
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
+import Snackbar from "@/components/Snackbar.vue";
 import Loading from "@/components/Loading.vue";
 import BackBtn from "@/components/BackBtn.vue";
 import DialogLogin from "@/components/DialogLogin.vue";
@@ -199,6 +197,7 @@ export default {
   name: "ProductDetail",
   components: {
     Header,
+    Snackbar,
     Loading,
     BackBtn,
     DialogLogin,
@@ -229,10 +228,42 @@ export default {
   },
   computed: {
     ...mapState({
+      popupStatus: (state) => state.popupStatus,
       productInfo: (state) => state.product.productInfo,
     }),
   },
   methods: {
+    // 分享
+    // 待修正：需要點擊兩次才會生效 而且點擊第二次成功後再點擊會疊加成功方法
+    copyLink() {
+      let shareBtn = document.querySelector("#shareBtn");
+      shareBtn.addEventListener("click", () => {
+        let dummy = document.createElement("input");
+        let link = window.location.href;
+        document.body.appendChild(dummy);
+        dummy.value = link;
+        dummy.select();
+
+        try {
+          let successful = document.execCommand("copy");
+          if (successful) {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "green", popupMsg: "連結已複製" },
+              { root: true }
+            );
+          } else {
+            this.setPopupStatus(true, { root: true });
+            this.setPopupDetails(
+              { popupMsgColor: "red", popupMsg: "連結複製失敗" },
+              { root: true }
+            );
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      });
+    },
     goBack() {
       this.$router.back(-1);
     },
@@ -336,6 +367,8 @@ export default {
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
       setLoadingMsg: "setLoadingMsg",
+      setPopupStatus: "setPopupStatus",
+      setPopupDetails: "setPopupDetails",
     }),
   },
   beforeRouteLeave(to, from, next) {

@@ -13,7 +13,6 @@ const actions = {
         params.company = params.company === null ? "" : params.company;
         params.bigItem = params.bigItem === null ? "" : params.bigItem;
         params.kind = params.kind === null ? "" : params.kind;
-        params.smallItem = params.smallItem === null ? "" : params.smallItem;
         params.content = params.content === null ? "" : params.content;
       }
 

@@ -30,6 +30,27 @@
       </v-card>
     </v-row>
 
+    <br /><br /><br />
+    <div class="mt-6 ml-6">
+      <p class="text-h5">聯絡我們</p>
+      <v-divider class="mt-6" />
+    </div>
+
+    <v-row no-gutters class="my-6 mx-10" align="center" justify="center">
+      <v-col class="mt-3" cols="12" md="11">
+        <v-btn icon outlined large>
+          <v-icon>mdi-email-outline</v-icon>
+        </v-btn>
+        <span class="ml-4">ifmproject344849@gmail.com</span>
+      </v-col>
+      <v-col class="mt-5" cols="12" md="11">
+        <v-btn icon outlined large>
+          <v-icon>fab fa-line</v-icon>
+        </v-btn>
+        <span class="ml-4">@565xzrks</span>
+      </v-col>
+    </v-row>
+
     <Loading />
   </div>
 </template>
@@ -37,6 +58,7 @@
 <script>
 import Header from "@/components/Header.vue";
 import Loading from "@/components/Loading.vue";
+import { mapMutations } from "vuex";
 
 export default {
   name: "FAQ",
@@ -49,10 +71,20 @@ export default {
       FAQData: [],
     };
   },
+  methods: {
+    ...mapMutations({
+      setLoadingStatus: "setLoadingStatus",
+      setLoadingMsg: "setLoadingMsg",
+    }),
+  },
   async mounted() {
     try {
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("Loading...", { root: true });
       const res = await this.$api.FAQ.getFAQ();
       this.FAQData = res;
+      this.setLoadingStatus(null, { root: true });
+      this.setLoadingMsg("", { root: true });
     } catch (err) {
       console.log(err);
     }

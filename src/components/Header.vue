@@ -93,7 +93,7 @@ export default {
         { name: "貼文", icon: "mdi-note", href: "/posts" },
         { name: "保險商品", icon: "mdi-view-dashboard", href: "/products" },
         { name: "排行榜", icon: "mdi-star", href: "/rank" },
-        { name: "幫助中心", icon: "mdi-lightbulb", href: "/FAQ" },
+        { name: "幫助中心", icon: "mdi-lightbulb", href: "/helpCenter" },
       ],
       memName: "",
       memPhoto: null,

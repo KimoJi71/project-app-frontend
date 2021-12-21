@@ -656,7 +656,6 @@ export default {
       getPosts: "post/getPosts",
       getComments: "comment/getComments",
       getCollectPost: "collection/getCollectPost",
-      getProfile: "member/getProfile",
     }),
     ...mapMutations({
       setLoadingStatus: "setLoadingStatus",
@@ -670,8 +669,9 @@ export default {
     this.getPostsInfo();
     // 取得留言
     this.getCommentsInfo();
+    // 取得用戶頭像
     if (this.memNum) {
-      const res = this.$api.member.getProfile(this.memNum);
+      const res = this.$store.dispatch("member/getProfile", this.memNum);
       res.then((result) => {
         this.memPhoto = result.data.memPhoto;
       });

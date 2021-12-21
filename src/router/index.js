@@ -158,9 +158,9 @@ const routes = [
     },
   },
   {
-    name: "FAQ",
-    path: "/FAQ",
-    component: () => import("@/pages/FAQ/FAQ"),
+    name: "HelpCenter",
+    path: "/helpCenter",
+    component: () => import("@/pages/helpCenter/HelpCenter.vue"),
     meta: {
       title: "幫助中心",
       keepAlive: false,

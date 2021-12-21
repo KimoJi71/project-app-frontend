@@ -15,6 +15,7 @@ const actions = {
       commit("setProfile", profile);
       commit("setLoadingStatus", null, { root: true });
       commit("setLoadingMsg", "", { root: true });
+      return profile;
     } catch (err) {
       console.log(err);
     }

@@ -68,4 +68,6 @@ const proContent = [
   "增值回饋分享金",
 ];
 
-export { proCompany, proBigItem, proKind, proPeriod, proContent };
+const proStatus = ["現售", "停售"];
+
+export { proCompany, proBigItem, proKind, proPeriod, proContent, proStatus };

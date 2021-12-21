@@ -7,7 +7,7 @@ const product = {
       return apiRequest.get(`/products`);
     } else {
       return apiRequest.get(
-        `/products?proCompany=${params.company}&proBigItem=${params.bigItem}&proKind=${params.kind}&proPeriod=${params.period}&proContent=${params.content}`
+        `/products?proCompany=${params.company}&proBigItem=${params.bigItem}&proKind=${params.kind}&proPeriod=${params.period}&proContent=${params.content}&proStatus=${params.status}`
       );
     }
   },

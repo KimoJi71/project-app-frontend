@@ -60,6 +60,15 @@
               :items="proContent"
               v-model="params.content"
             />
+            <v-autocomplete
+              label="銷售狀態"
+              clearable
+              chips
+              dense
+              solo
+              :items="proStatus"
+              v-model="params.status"
+            />
           </v-card-text>
           <div class="text-center">
             <v-btn
@@ -225,6 +234,7 @@ import {
   proKind,
   proPeriod,
   proContent,
+  proStatus,
 } from "@/assets/constant/product.js";
 import { mapState, mapActions, mapMutations } from "vuex";
 
@@ -250,12 +260,14 @@ export default {
       proKind,
       proPeriod,
       proContent,
+      proStatus,
       params: {
         company: "",
         bigItem: "",
         kind: "",
         period: "",
         content: "",
+        status: "",
       },
       proData: [],
       total: 0,

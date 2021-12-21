@@ -14,6 +14,7 @@ const actions = {
         params.bigItem = params.bigItem === null ? "" : params.bigItem;
         params.kind = params.kind === null ? "" : params.kind;
         params.content = params.content === null ? "" : params.content;
+        params.status = params.status === null ? "" : params.status;
       }
 
       const productInfo = await this._vm.$api.product.getProductInfo(params);

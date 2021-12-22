@@ -144,14 +144,30 @@
           <v-divider class="my-6 mx-11" v-if="profileInfo.memIntro" />
         </v-row>
         <!-- 文章 -->
-        <div class="text-center" v-if="postsData.length === 0">
+        <div
+          class="text-center"
+          v-if="
+            postsData.length === 0 &&
+            memNum === parseInt($cookies.get('user_permission'))
+          "
+        >
           <v-col class="mt-2" cols="12" md="11">
             <v-icon color="grey" size="100"
               >mdi-emoticon-neutral-outline</v-icon
             >
           </v-col>
-          <v-col class="mt-10" cols="12" md="11">
+          <v-col class="mt-5" cols="12" md="11">
             <span class="text-h5 grey--text">您還沒有發佈任何文章喔！</span>
+          </v-col>
+        </div>
+        <div class="text-center" v-else-if="postsData.length === 0">
+          <v-col class="mt-2" cols="12" md="11">
+            <v-icon color="grey" size="100"
+              >mdi-emoticon-neutral-outline</v-icon
+            >
+          </v-col>
+          <v-col class="mt-5" cols="12" md="11">
+            <span class="text-h5 grey--text">該用戶還沒有發佈任何文章喔！</span>
           </v-col>
         </div>
         <v-row

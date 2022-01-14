@@ -448,6 +448,14 @@ export default {
       setPopupDetails: "setPopupDetails",
     }),
   },
+  watch: {
+    params: {
+      handler: function () {
+        this.page = 1;
+      },
+      deep: true,
+    },
+  },
   beforeRouteLeave(to, from, next) {
     from.meta.keepAlive = false;
     next();

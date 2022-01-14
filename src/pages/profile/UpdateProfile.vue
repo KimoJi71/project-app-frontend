@@ -4,25 +4,22 @@
     <br /><br /><br />
     <v-card class="mx-auto my-6" max-width="80%" elevation="3">
       <v-row class="my-4" align="center" justify="center">
-        <v-badge
-          style="cursor: pointer"
-          bottom
-          bordered
-          icon="mdi-camera"
-          color="black"
-          offset-x="20"
-          offset-y="20"
-        >
-          <v-avatar
-            class="mt-6"
-            color="grey"
-            size="85"
-            @click="onSelect = !onSelect"
+        <div @click="onSelect = !onSelect">
+          <v-badge
+            style="cursor: pointer"
+            bottom
+            bordered
+            icon="mdi-camera"
+            color="black"
+            offset-x="20"
+            offset-y="20"
           >
-            <v-icon v-if="memPhoto === null" dark x-large>mdi-account</v-icon>
-            <v-img v-else cover :src="memPhoto" />
-          </v-avatar>
-        </v-badge>
+            <v-avatar class="mt-6" color="grey" size="85">
+              <v-icon v-if="memPhoto === null" dark x-large>mdi-account</v-icon>
+              <v-img v-else cover :src="memPhoto" />
+            </v-avatar>
+          </v-badge>
+        </div>
       </v-row>
       <v-row v-if="onSelect" class="mb-4" align="center" justify="center">
         <v-tooltip bottom>
